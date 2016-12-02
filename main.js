@@ -17,6 +17,7 @@
 	var roleClaimer = require('role.claimer');
 	global.roomMemory = require('roomMemory');
 	var linkManager = require('linkManager');
+	global.observerManager = require('observerManager');
 	require('prototype.creep')();
 	require('prototype.spawn')();
 	require('prototype.flag')();
