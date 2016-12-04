@@ -26,6 +26,7 @@ var roleMiner = {
     },
     
     run:function(creep){
+       try{
         creep.say('RRRR',true);
         var remoteMining = creep.memory.remoteMiningFlag;
         if(remoteMining){
@@ -132,7 +133,10 @@ var roleMiner = {
         }else{
             creep.say('OOPS');
         }
-        
+    }catch(error){
+        console.log('Remote Miner error:'+error+' creepName:'+creep.name+' mem:'+JSON.stringify(creep.memory));
+        Game.notify('Remote Miner error:'+error+' creepName:'+creep.name+' mem:'+JSON.stringify(creep.memory));
+    }
     }
     
 }
