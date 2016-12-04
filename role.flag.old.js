@@ -126,7 +126,7 @@ var roleFlag = {
         for( i = 0; i<path.length ; i++){
             var roomPos = path[i];
             roomPos = new RoomPosition(roomPos.x,roomPos.y,roomPos.roomName);
-            console.log("buildRoads:"+roomPos);
+            //console.log("buildRoads:"+roomPos);
             if(roomPos){
                 //console.log(roomPos);
                 /*if(constructionSites && constructionSites.length>0 || roads && roads.length>0){
@@ -765,7 +765,7 @@ var roleFlag = {
             var sitesLength = sites ? sites.length : 0;
             defaultN = sites && sites.length ? Math.ceil((sites.length/10)) : 1;
             //defaultN = 1; //TODO Remove this once economy is stable again
-            console.log('Remote Builders: Flag: '+flag.name+' Room: '+flag.pos.roomName+'SiteCount: '+sitesLength+' Computed Builders Needed'+defaultN + ' current pop: '+rLength);
+           // console.log('Remote Builders: Flag: '+flag.name+' Room: '+flag.pos.roomName+'SiteCount: '+sitesLength+' Computed Builders Needed'+defaultN + ' current pop: '+rLength);
 
         }
         var minimumN = flag.memory.minimumN ? flag.memory.minimumN : 1;
@@ -987,7 +987,7 @@ var roleFlag = {
             }else if(flagName.startsWith('RangedAttack')){
                 this.runRangedAttacker(flag);
             }else if(flagName.startsWith('Raid')){
-                console.log('FlagName: '+flagName);
+               // console.log('FlagName: '+flagName);
                 this.runRaider(flag); //TODO Fix Flag Naming issues related to raider/defender/guards
 //                this.runSmartRaider(flag);
             }else if(flagName.startsWith('SummonHealer')){
@@ -1193,6 +1193,21 @@ var roleFlag = {
 
     },
 
+    getSpawnerInRoom:function(flag){
+        var spawner = null;
+        if(flag.room && flag.room.controller && flag.room.controller.my){
+            var spawners = roomMemory.getSpawnersInRoom(flag.room);
+            for(var spawn in spawners) {
+                spawn = spawners[spawn];
+                if (!spawn.spawning) {
+                }
+                return spawn;
+            }
+        }else{
+            return spawner;
+        }
+        return spawner;
+    },
     getSpawnerOld:function(flag){
         return Game.spawns.Spawn;
         for(var spawn in Game.spawns){

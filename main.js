@@ -562,9 +562,9 @@
 	}
 	function runTower(room){
 		
-		try{     //TODO Change Parking Lot
+		try{
 
-			var tower = Game.rooms[room].find(FIND_STRUCTURES, { filter: (structure) => { return structure.structureType== STRUCTURE_TOWER}}); //TODO REmove ref to parking lot
+			var tower = Game.rooms[room].find(FIND_MY_STRUCTURES, { filter: (structure) => { return structure.structureType== STRUCTURE_TOWER}});
 			if(tower){
 			for(var t in tower){
 				t= tower[t];
@@ -618,9 +618,11 @@
 			var oHits = boogie.hits;
 			var res = tower.attack(boogie);
 			var nHits = boogie.hits;
-			Game.notify(Game.time+' Boogies: '+hostiles.length+' . Attacking: Room:'+tower.room+' Name:'+boogie.name+'Owner:'+boogie.owner.username+'Part Toughs:'+boogie.getActiveBodyparts(TOUGH)+' Part Heals: '+boogie.getActiveBodyparts(HEAL)+
-			'Part Attack: '+boogie.getActiveBodyparts(ATTACK)+'Part Ranged:'+boogie.getActiveBodyparts(RANGED_ATTACK)+' Part work:'+boogie.getActiveBodyparts(WORK)+' AttackDamage: '+(oHits-nHits)+'Hits:'+nHits+'/'+boogie.hitsMax,10);
-			
+			if(Game.time % 10 == 0){
+                Game.notify(Game.time+' Boogies: '+hostiles.length+' . Attacking: Room:'+tower.room+' Name:'+boogie.name+'Owner:'+boogie.owner.username+'Part Toughs:'+boogie.getActiveBodyparts(TOUGH)+' Part Heals: '+boogie.getActiveBodyparts(HEAL)+
+                    'Part Attack: '+boogie.getActiveBodyparts(ATTACK)+'Part Ranged:'+boogie.getActiveBodyparts(RANGED_ATTACK)+' Part work:'+boogie.getActiveBodyparts(WORK)+' AttackDamage: '+(oHits-nHits)+'Hits:'+nHits+'/'+boogie.hitsMax,10);
+            }
+
 			console.log('Attack result: '+res+' target status: '+boogie.hits +' /' +boogie.hitsMax );//+JSON.stringify(boogie));
 		}else{
 			//console.log('No one to attack');

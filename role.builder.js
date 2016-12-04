@@ -278,7 +278,7 @@ module.exports = {
         });
             allRepairs.sort((a, b) => a.hits < b.hits);
 
-            var rampartRepairs = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {return structure.structureType == STRUCTURE_RAMPART && structure.hits < targetRampartStrength}
+            var rampartRepairs = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {return structure.structureType == STRUCTURE_RAMPART && structure.hits <= targetRampartStrength}
         });
             // console.log(targets);
             //if(target) {

@@ -143,20 +143,46 @@ var roomMemory= {
     },
     setRoomTargetRampartStrength:function(room){
         if(room.controller && room.controller.my) {
-            var walls = room.find(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_RAMPART}});
+            var ramparts = room.find(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_RAMPART}});
             var lowest = 0;
             var highest = 0;
-            for(var w in walls){
-                w = walls[w];
-                lowest  = lowest > w.hits ? w.hits : lowest;
-                highest = highest < w.hits ? w.hits : highest;
+            for(var rampart in ramparts){
+                rampart = ramparts[rampart];
+                lowest  = lowest > rampart.hits ? rampart.hits : lowest;
+                highest = highest < rampart.hits ? rampart.hits : highest;
             }
 
             highest = highest > lowest ? highest : highest+10000;
-            room.memory.targetRampartStrength = highest;
+            var current =  room.memory.targetRampartStrength;
+            room.memory.targetRampartStrength = current && current > highest ? current : highest;
         }
     },
 
+    getSpawnersInRoom(room){
+        if(!room.memory.spawns){
+            this.setSpawnersInRoom(room);
+        }return room.memory.spawns;
+
+    },
+    setSpawnersInRoom(room){
+        var sps = [];
+        if(room && room.controller && room.controller.my){
+            var spawns = Game.spawns;
+            if(spawns && spawns.length){
+                for(var spawn in spawns){
+                    var spId = spawns[spawn];
+                    if(spId){
+                        spawn = Game.getObjectById(spId);
+                        if(spawn && spawn.room.name == room.name){
+                            sps.push(spawn);
+                        }
+                    }
+                }
+                return sps;
+            }
+        }
+        room.memory.spawns = sps;
+    },
 
     builderQueryCache:function(room) {
         this.setConstructionSites(room);
@@ -237,6 +263,7 @@ var roomMemory= {
         room.memory.constructionSites = null;
         room.memory.hostiles = null;
         room.memory.myStructures = null;
+        room.memory.spawns = null;
     }
 
 
