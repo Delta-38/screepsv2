@@ -62,7 +62,26 @@ var roleMiner = {
             }else{
                 creep.say('D-GtoW2');
                 if(remoteMining){
-                    console.log(creep.moveTo(t,{reusePath: 10}))    
+                    var err = creep.moveTo(t, {reusePath : 10});
+                    if(err!=0){
+                        if(err == ERR_NO_PATH){
+                            console.log("A swap would be nice.");
+                            var p = creep.room.findPath(creep.pos,t,{ignoreCreeps:true});
+                            if(p && p.length){
+                                var nextStep = p[0];
+                                if(nextStep){
+                                    var res = creep.room.lookForAt(LOOK_CREEPS,nextStep);
+                                    if(res && res.length){
+                                        var roadBlockingCreep = res[0];
+                                        roadBlockingCreep.swapRequired(creep.pos);
+                                        var swapRes = creep.moveTo(nextStep);
+                                        Game.notify("Swap Attempted At "+creep.pos+ " check result");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    console.log(creep.moveTo(t,{reusePath: 10}));
                 }else{
                    console.log( creep.moveTo(t,{reusePath: 10}));
                 }

@@ -154,9 +154,10 @@ var roleFlag = {
                         roadsBuilt++;
                     }
                 }
-                console.log('buildRoad+'+roomPos+'end');
+                //console.log('buildRoad+'+roomPos+'end');
+
             }
-            
+            console.log('Ordered '+roadsBuilt+' new Roads');
         }
         }catch(error){
             console.log(' Error in buildRoad: '+error+' path.length'+path.length+' at index:'+i);

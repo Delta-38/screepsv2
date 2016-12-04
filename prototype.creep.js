@@ -118,6 +118,21 @@ module.exports = function(){
         this.moveTo(destination, { reusePath:10});
     };
 
+    Creep.prototype.swapWithCreep= function(otherCreep){
+        otherCreep.memory.swapRequired = this.pos;
+        this.moveTo(otherCreep.pos);
+    };
+
+    Creep.prototype.swapIfRequired = function(){
+        var swapRequired = this.memory.swapRequired;
+        if(swapRequired){
+            var res = this.moveTo(new RoomPosition(swapRequired.x , swapRequired.y, swapRequired.roomName));
+            console.log("Received a swapRequest into " + swapRequired+ " result: "+res);
+            this.memory.swapRequired = null;
+            return true;
+        }
+        return false;
+    };
     Creep.prototype.canWork = function(){
         return this.getActiveBodyparts(WORK);
     };

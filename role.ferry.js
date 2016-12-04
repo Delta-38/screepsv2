@@ -11,6 +11,10 @@ var roleFerry = {
 
     run: function (creep) {
         try {
+            if(creep.swapIfRequired()){
+                console.log("Creep: "+creep.name+" at: "+creep.pos+" swapping as required");
+                return;
+            }
             var remotePickup = creep.memory.remotePickup;
             var remoteBase = creep.memory.remoteBase;
             var loading = creep.memory.loading;
