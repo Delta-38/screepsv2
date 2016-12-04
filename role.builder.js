@@ -86,13 +86,14 @@ module.exports = {
             if(creep.memory.building){
                 //Get construction sites
                 console.log('Builder: '+creep.name+ ' Looking for tasks');
-                if(flag && 1==2){
+                if((flag && 1==2) || creep.memory.remoteSourceRoom != null){
                     if(creep.pos.roomName != flag.pos.roomName){
                         creep.memory.destReached = false;
+
                     }
                 }
 
-
+                
 
                 /*
                 var rampartRepairs = creep.room.find(FIND_STRUCTURES, {filter: (structure) => { return (structure.structureType == STRUCTURE_RAMPART && structure.hits < 10000) || ( structure.structureType == STRUCTURE_WALL && structure.hits < targetWallStrength )}});
@@ -127,7 +128,11 @@ module.exports = {
                 if(!creep.room.controller){
                     var remoteSourceRoom = creep.memory.remoteSourceRoom;
                     if(remoteSourceRoom ){
-                        creep.moveTo(20,20,remoteSourceRoom);
+                        console.log("Moving To:"+remoteSourceRoom);
+                        
+                        var r= creep.moveTo(new RoomPosition(20,20,remoteSourceRoom));
+                        creep.say('Fillinf up');
+                        
                     }else{
                         creep.memory.remoteSourceRoom = null;
                     }
