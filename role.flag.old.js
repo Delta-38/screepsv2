@@ -122,29 +122,14 @@ var roleFlag = {
         var roadsFound = 0;
 
         try{
-        console.log('Received: '+path.length);
-        for( i = 0; i<path.length ; i++){
-            var roomPos = path[i];
-            roomPos = new RoomPosition(roomPos.x,roomPos.y,roomPos.roomName);
-            //console.log("buildRoads:"+roomPos);
-            if(roomPos){
-                //console.log(roomPos);
-                /*if(constructionSites && constructionSites.length>0 || roads && roads.length>0){
-                    //continue;
-                }else{
-                    var r = roomPos.createConstructionSite(STRUCTURE_ROAD);
-                    if(r == ERR_FULL){
-                        return;
-                    }
-                    roadsBuilt++;
-                }*/
-                
-                var roads = roomPos.lookFor(LOOK_STRUCTURES);
-                if(roads && roads.length){
-                    roadsFound++;
-                }else{
-                    var constructionSites = roomPos.lookFor(LOOK_CONSTRUCTION_SITES);
-                    if(constructionSites && constructionSites.length>0){
+            console.log('Received: '+path.length);
+            for( i = 0; i<path.length ; i++){
+                var roomPos = path[i];
+                roomPos = new RoomPosition(roomPos.x,roomPos.y,roomPos.roomName);
+                //console.log("buildRoads:"+roomPos);
+                if(roomPos){
+                    //console.log(roomPos);
+                    /*if(constructionSites && constructionSites.length>0 || roads && roads.length>0){
                         //continue;
                     }else{
                         var r = roomPos.createConstructionSite(STRUCTURE_ROAD);
@@ -152,13 +137,29 @@ var roleFlag = {
                             return;
                         }
                         roadsBuilt++;
+                    }*/
+                    
+                    var roads = roomPos.lookFor(LOOK_STRUCTURES);
+                    if(roads && roads.length){
+                        roadsFound++;
+                    }else{
+                        var constructionSites = roomPos.lookFor(LOOK_CONSTRUCTION_SITES);
+                        if(constructionSites && constructionSites.length>0){
+                            //continue;
+                        }else{
+                            var r = roomPos.createConstructionSite(STRUCTURE_ROAD);
+                            if(r == ERR_FULL){
+                                return;
+                            }
+                            roadsBuilt++;
+                        }
                     }
+                    //console.log('buildRoad+'+roomPos+'end');
+    
                 }
-                //console.log('buildRoad+'+roomPos+'end');
-
             }
+            
             console.log('Ordered '+roadsBuilt+' new Roads');
-        }
         }catch(error){
             console.log(' Error in buildRoad: '+error+' path.length'+path.length+' at index:'+i);
             Game.notify(' Error in buildRoad: '+error+' path.length'+path.length);
@@ -785,14 +786,9 @@ var roleFlag = {
                 getRemote = this.getSpawner(flag);
                 flag.memory.spawn = getRemote.name;
             }
-            
-            var mSpawn = flag.memory.spawn;
-            var getRemote;
-            if(mSpawn){
-                getRemote = Game.spawns[mSpawn];
-            }else{
-                getRemote = this.getSpawner(flag);
-            }
+
+
+
             //var getRemote = this.getSpawner(flag);
             // getScout.createCreep([MOVE],undefined,{role: 'scout', dest: flag.pos});
             if(flag.memory.extraMove === undefined){
@@ -807,10 +803,18 @@ var roleFlag = {
                 body = needsExtraMove ? [MOVE, MOVE,MOVE, MOVE,WORK,WORK, CARRY,CARRY] : [MOVE, MOVE,WORK,WORK, CARRY,CARRY];
                 
             }
+
+            var remoteSourceRoomV = flag.memory.remoteSourceRoom;
+            if(!remoteSourceRoomV){
+                remoteSourceRoomV = null;
+                flag.memory.remoteSourceRoom = remoteSourceRoomV;
+            }
+
              console.log('RemoteBuilder Possible: ' + getRemote.createCreep(body, undefined, {
                         role: 'remoteBuilder',
                         flagName: flag.name,
-                        dest: flag.pos
+                        dest: flag.pos,
+                     remoteSourceRoom: remoteSourceRoomV
                     }));
                     /*
             if(defaultN==1 && (sites && sitesLength==0)) {

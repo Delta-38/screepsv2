@@ -125,8 +125,14 @@ module.exports = {
                 //creep.say('Fetch Stuff');
                 creep.say('Fetch');
                 if(!creep.room.controller){
-                    
-                 
+                    var remoteSourceRoom = creep.memory.remoteSourceRoom;
+                    if(remoteSourceRoom ){
+                        creep.moveTo(20,20,remoteSourceRoom);
+                    }else{
+                        creep.memory.remoteSourceRoom = null;
+                    }
+
+
                     return;   
                 }
                 
