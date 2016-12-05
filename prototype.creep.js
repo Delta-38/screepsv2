@@ -126,6 +126,7 @@ module.exports = function(){
     Creep.prototype.swapIfRequired = function(){
         var swapRequired = this.memory.swapRequired;
         if(swapRequired){
+            console.log('Swap Required '+this.name+' to'+swapRequired);
             var res = this.moveTo(new RoomPosition(swapRequired.x , swapRequired.y, swapRequired.roomName));
             console.log("Received a swapRequest into " + swapRequired+ " result: "+res);
             this.memory.swapRequired = null;

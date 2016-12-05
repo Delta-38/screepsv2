@@ -65,22 +65,27 @@ var roleMiner = {
                 if(remoteMining){
                     var err = creep.moveTo(t, {reusePath : 10});
                     if(err!=0){
-                        if(err == ERR_NO_PATH){
-                            console.log("A swap would be nice.");
-                            var p = creep.room.findPath(creep.pos,t,{ignoreCreeps:true});
+                        /*
+                        if(err == ERR_NO_PATH){ //TODO This function needs some debugging
+                            console.log("A swap would be nice."+t);
+                            var p = creep.room.findPath(creep.pos,t.pos,{ignoreCreeps:true});
+                            console.log("Got a path "+p);
                             if(p && p.length){
                                 var nextStep = p[0];
+                                console.log('Path p0'+JSON.stringify(nextStep));
                                 if(nextStep){
-                                    var res = creep.room.lookForAt(LOOK_CREEPS,nextStep);
+                                    var res = creep.room.lookForAt(LOOK_CREEPS,new RoomPosition(nextStep.x,nextStep.y,creep.pos.roomName));
                                     if(res && res.length){
                                         var roadBlockingCreep = res[0];
-                                        roadBlockingCreep.swapRequired(creep.pos);
+                                        console.log('Found Creep '+roadBlockingCreep);
+                                        roadBlockingCreep.memory.swapRequired = creep.pos;
+                                        roadBlockingCreep.moveTo(creep.pos);
                                         var swapRes = creep.moveTo(nextStep);
                                         Game.notify("Swap Attempted At "+creep.pos+ " check result");
                                     }
                                 }
                             }
-                        }
+                        }*/
                     }
                     console.log(creep.moveTo(t,{reusePath: 10}));
                 }else{
@@ -134,7 +139,7 @@ var roleMiner = {
             creep.say('OOPS');
         }
     }catch(error){
-        console.log('Remote Miner error:'+error+' creepName:'+creep.name+' mem:'+JSON.stringify(creep.memory));
+        console.log('Remote Miner error:'+error+' st:'+error.stack+' creepName:'+creep.name+' mem:'+JSON.stringify(creep.memory));
         Game.notify('Remote Miner error:'+error+' creepName:'+creep.name+' mem:'+JSON.stringify(creep.memory));
     }
     }

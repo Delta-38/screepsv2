@@ -51,6 +51,12 @@ module.exports = {
     
     runRemote: function(creep){ //TODO FIX ENERGY LESS ROOM FIXER
         try{
+            if(creep.swapIfRequired()){
+                console.log("Creep: "+creep.name+" at: "+creep.pos+" swapping as required");
+                return;
+            }else{
+                console.log(creep.name+'No Need To Swap');
+            }
             //FIND FLAGS FOR CONSTRUCTION
             var targetWallStrength = 200000;
             var targetRampartStrength = 300000;
@@ -60,6 +66,7 @@ module.exports = {
             //var constructionSites = roomMemory.getConstructionSites(flag.room);
             //console.log('Creep: '+creep.name+ ' RemoteRoom: '+flag.room+' Sites:'+JSON.stringify(constructionSites));
             var hostiles = roomMemory.getHostilesInRoom(creep.room);
+
             if(creep.shouldFlee(hostiles)){
                 creep.flee(hostiles);
                 creep.say('Oh!Noes!',true);
