@@ -292,7 +292,9 @@ var roleFlag = {
             var fullMiner = isReserved || owned ? true : false;
             
             flag.memory.fullMiner = fullMiner;
-            
+            flag.remoteDeadCreepsFromMemoryField("ferries");
+            flag.remoteDeadCreepsFromMemoryField("remoteMiners");
+
             //console.log(flag.name+' requires Full Miner: '+fullMiner);
             /*if((Game.time%5)!=0){
                 //console.log('Game Time: '+Game.time + ' mod : '+Game.time%5);
@@ -956,7 +958,7 @@ var roleFlag = {
             }
         }catch(err){
             this.pdeb('Error in InitMiner flag: '+flag.name+'+err'+err);
-            Game.notify('Error in InitMiner flag:'+flag.name+' err'+err+ ' '+JSON.stringify(spawner));
+            Game.notify('Error in InitMiner flag:'+flag.name+' err'+err+ err.trace+' '+JSON.stringify(spawner));
         }
     },
     run:function(flag){

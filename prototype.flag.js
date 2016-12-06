@@ -45,7 +45,28 @@ module.exports = function(){
         }
     };
 
-
+    Flag.prototype.remoteDeadCreepsFromMemoryField = function(fieldName){
+        try {
+            var arr = this.memory[fieldName];
+            var survivingCreeps = [];
+            if (arr && arr.length) {
+                for(var creepIndex in arr){
+                    var creepId = arr[creepIndex];
+                    if(Game.getObjectById(creepId)){
+                        survivingCreeps.push(creepId);
+                    }else{
+                        console.log(this.name+' remoteDeadCreepsFromMemoryField creep:'+creepId+" has passed away");
+                    }
+                }
+                this.memory[fieldName] = survivingCreeps;
+            } else {
+                this.memory[fieldName] = [];
+            }
+        }catch (error){
+            console.log("Error in Flag:"+this.name+" in remoteDeadCreepsFromMemoryField on fieldName:"+fieldName+" err:"+error+" "+error.trace);
+            Game.notify("Error in Flag:"+this.name+" in remoteDeadCreepsFromMemoryField on fieldName:"+fieldName+" err:"+error+" "+error.trace);
+        }
+    };
 
 
 

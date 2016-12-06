@@ -32,6 +32,7 @@ var roleMiner = {
         if(remoteMining){
             if(remoteMining && (remoteMining = Game.flags[remoteMining])){
                 //console.log('Remining'+JSON.stringify(remoteMining))
+                this.setInFlagMem(creep,remoteMining.name);
             }
             remoteMining = remoteMining; //Game.getObjectById(remoteMining);
         }
@@ -142,9 +143,19 @@ var roleMiner = {
         console.log('Remote Miner error:'+error+' st:'+error.stack+' creepName:'+creep.name+' mem:'+JSON.stringify(creep.memory));
         Game.notify('Remote Miner error:'+error+' creepName:'+creep.name+' mem:'+JSON.stringify(creep.memory));
     }
+    },
+
+    setInFlagMem:function(creep,remoteMining){
+        if(remoteMining){
+            creep.setInFlagMemory(remoteMining,"remoteMiners");
+        }else{
+            console.log("RemoteMining not set"+creep.name+" "+creep.memory);
+        }
     }
-    
+
+
 }
+
 
 
 module.exports = roleMiner;

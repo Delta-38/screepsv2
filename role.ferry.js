@@ -20,7 +20,7 @@ var roleFerry = {
             var loading = creep.memory.loading;
             var toBase = creep.memory.toBase;
             var reuseVal = 10;
-            //TODO Ferry has to become hostile aware
+            this.setToMem(creep);
             var hostiles = roomMemory.getHostilesInRoom(creep.room);
             if(creep.shouldFlee(hostiles)){
                 creep.flee(hostiles);
@@ -186,7 +186,18 @@ var roleFerry = {
         }
 
         //TODO Try to make this the first self running module
+    },
+
+    setToMem:function(creep){
+        var remoteFlagName = creep.memory.remoteFlag;
+        if(remoteFlagName){
+            creep.setInFlagMemory(remoteFlagName,"ferries");
+        }else{
+            console.log("Creep:"+creep.name+" remoteFlag not set");
+        }
     }
+
+
 
 };
 

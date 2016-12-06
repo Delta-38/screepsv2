@@ -134,6 +134,26 @@ module.exports = function(){
         }
         return false;
     };
+
+    Creep.prototype.setInFlagMemory = function(flagName,fieldName){
+        try {
+            var flag = Game.flags[flagName];
+            if (flag) {
+                var arr = flag.memory[fieldName];
+                if (!arr) {
+                    arr = [];
+                }
+                if(arr.indexOf(this.id) == -1){
+                    arr.push(this.id);
+                }
+                flag.memory[fieldName] = arr;
+            } else {
+                console.log("Could not set in FlagMemory. Passed flag name:" + flagName + " obtained flag:" + flag);
+            }
+        }catch (error){
+            Game.notify("Error in Creep.setInFlagMemory "+error + "stack:"+error.trace + " passed: "+flagName+" "+fieldName);
+        }
+    };
     Creep.prototype.canWork = function(){
         return this.getActiveBodyparts(WORK);
     };
