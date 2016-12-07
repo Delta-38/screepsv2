@@ -12,7 +12,7 @@ var roleClaimer = {
     run: function (creep) {
         try {
             //var taskType = creep.memory.task;
-             var hostiles = roomMemory.getHostilesInRoom(creep.room);
+            var hostiles = roomMemory.getHostilesInRoom(creep.room);
             if(creep.shouldFlee(hostiles)){
                 creep.flee(hostiles);
                 return;
@@ -20,6 +20,10 @@ var roleClaimer = {
             var dest = creep.memory.dest;
             //this.achieveVision(creep,dest);
             this.goToLocation(creep,dest);
+            var flagName = creep.memory.flagName;
+            if(flagName ){
+                creep.setInFlagMemory(flagName,"creeps");
+            }
         } catch (err) {
             console.log('\n\nClaimer Error: ' + err + '\n\n');
             Game.notify('Error in Claimer module: Current Position: ' + creep.pos + ' Current Destination: ' + dest + 'Error: ' + err);

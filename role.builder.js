@@ -62,6 +62,7 @@ module.exports = {
             var targetRampartStrength = 300000;
             var flagName = creep.memory.flagName;
             var flag = Game.flags[flagName];
+            creep.setInFlagMemory(flagName,"rbs");
             this.basicSetting(creep);
             //var constructionSites = roomMemory.getConstructionSites(flag.room);
             //console.log('Creep: '+creep.name+ ' RemoteRoom: '+flag.room+' Sites:'+JSON.stringify(constructionSites));

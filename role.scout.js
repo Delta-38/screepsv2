@@ -14,7 +14,10 @@ var roleScout = {
         //var taskType = creep.memory.task;
             var dest = creep.memory.dest;
             this.achieveVision(creep,dest);
-            
+            var flag = creep.memory.remoteFlag ;
+            if(flag){
+                creep.setInFlagMemory(flag,"scouts");
+            }
         }catch(err){
             console.log('\n\nSCout Error: '+err+'\n\n');
             Game.notify('Error in scout module: Current Position: '+creep.pos+ ' Current Destination: '+dest+'Error: '+err);

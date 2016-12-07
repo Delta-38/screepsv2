@@ -26,6 +26,7 @@ var roleMiner = {
         creep.say(creep.room.memory.harvestQuota);
     },
     run: function (creep) { //TODO CHeck to see if this is optimized and if it can be merged with remote miner through subRole or operation Modes
+        //TODO Refactor, contains old dead code!
         var remoteMining = creep.memory.remoteMining;
         if (remoteMining) {
             remoteMining = remoteMining; //Game.getObjectById(remoteMining);

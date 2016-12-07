@@ -690,6 +690,7 @@ var roleFlag = {
             }else{
                 claimers = _.filter(Game.creeps, (creep) => creep.memory.role == 'claimer' && creep.memory.flagName == flag.name );
             }
+            flag.remoteDeadCreepsFromMemoryField("creeps");
             flag.memory.claimers = claimers;
             if(claimers && claimers.length<1){
                 var spawner;
@@ -732,7 +733,7 @@ var roleFlag = {
         if(flag.room){
             return;
         }
-        
+        flag.remoteDeadCreepsFromMemoryField("scouts");
         var scouts = _.filter(Game.creeps, (creep) => creep.memory.role == 'scout' && creep.memory.dest.x == flag.pos.x && creep.memory.dest.y == flag.pos.y && flag.pos.roomName == creep.memory.dest.roomName);
         //console.log('Scouts '+JSON.stringify(scouts));
         if(scouts && scouts.length==0){
@@ -747,7 +748,7 @@ var roleFlag = {
             
             //var getScout = this.getSpawner(flag);
             // getScout.createCreep([MOVE],undefined,{role: 'scout', dest: flag.pos});
-            console.log('Scout Possible: '+getScout.createCreep([MOVE],undefined,{role: 'scout', dest: flag.pos}));
+            console.log('Scout Possible: '+getScout.createCreep([MOVE],undefined,{role: 'scout', dest: flag.pos, remoteFlag: flag.name }));
 
         }
     },
@@ -758,7 +759,7 @@ var roleFlag = {
          }
         
          try{
-         
+         flag.remoteDeadCreepsFromMemoryField("rbs");
         // console.log('Remote Builders Start checks: '+flag.name);//+'\n\n\n\n\n');
         var remotes = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteBuilder' && creep.memory.flagName == flag.name && creep.memory.dest.x == flag.pos.x && creep.memory.dest.y == flag.pos.y && flag.pos.roomName == creep.memory.dest.roomName);
         var defaultN = 1;
@@ -919,6 +920,7 @@ var roleFlag = {
             var sourceToMine = sources[0];
             var miners = _.filter(Game.creeps, (creep) => creep.memory.role == 'miner' && creep.memory.flagName == flag.name );
             flag.memory.miners = miners;
+            flag.remoteDeadCreepsFromMemoryField("creeps");
             if(miners && miners.length>0){
                 this.pdeb('Flag Miner: '+flag.name+' have: '+ miners.length+' miners');
             }else{
@@ -954,7 +956,7 @@ var roleFlag = {
                     err = 'Less than 300 eCap';
                 }
                 
-                Game.notify('InitMiner: '+flag.name+ 'Err:'+err+' Res:  '+res );
+                //Game.notify('InitMiner: '+flag.name+ 'Err:'+err+' Res:  '+res );
             }
         }catch(err){
             this.pdeb('Error in InitMiner flag: '+flag.name+'+err'+err);
