@@ -199,12 +199,12 @@ var roleMilitary = {
             } else {
                 var targets = dest.findInRange(FIND_STRUCTURES, 0);
                 if (targets && targets.length) {
-                    console.log(creep.dismantle(targets[0]));
+                    creep.log(creep.dismantle(targets[0]));
                     creep.say('16Tons',true);
                 } else {
                     var structures = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
                     if (structures && structures.length) {
-                        console.log(creep.dismantle(structures[0]));
+                        creep.log(creep.dismantle(structures[0]));
                     }
                 }
             }
@@ -233,7 +233,7 @@ var roleMilitary = {
         
         var flag = Game.flags[creep.memory.flagName];
         dest = flag.pos;
-        console.log('Healer Creep: \n\n\n');
+        creep.log('Healer Creep: \n\n\n');
         var hurtFriendlies = creep.room.find(FIND_MY_CREEPS, {filter: (creep) => {return creep.hitsMax > creep.hits }});
 
         if(hurtFriendlies){
@@ -273,7 +273,7 @@ var roleMilitary = {
 
             }
         }else{
-            console.log('AttackBuildings: invalid list passed'+buildings);
+            creep.log('AttackBuildings: invalid list passed'+buildings);
         }
 
 
@@ -362,7 +362,7 @@ var roleMilitary = {
         }
     },
     pdeb: function (text) {
-        console.log(text);
+        creep.log(text);
     }
 
 

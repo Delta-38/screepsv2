@@ -10,20 +10,20 @@ var utility = require('utility');
 module.exports = {
 
     builder:function(creep,sites){
-        //console.log('Builder: '+creep.name+ ' sites: '+JSON.stringify(sites));
+        //creep.log('Builder: '+creep.name+ ' sites: '+JSON.stringify(sites));
         var t = creep.pos.findClosestByPath(sites);
         var err = 0;
         if((err =creep.build(t))==ERR_NOT_IN_RANGE){
             creep.moveTo(t, {reusePath:10 , maxRooms:0});
             creep.say('Going '+t);
         }else{
-            console.log('Builder: '+creep.name+ ' building error: '+err+'\n\n');
+            creep.log('Builder: '+creep.name+ ' building error: '+err+'\n\n');
 
         }
     },
     repairer:function(creep,repairs){
         var t = repairs[0];
-        //console.log('Builder: '+creep.name+ ' repairs: '+JSON.stringify(repairs));
+        //creep.log('Builder: '+creep.name+ ' repairs: '+JSON.stringify(repairs));
 
         if(creep.repair(t)==ERR_NOT_IN_RANGE){
             creep.moveTo(t,{reusePath:10 , maxRooms:0});
@@ -52,10 +52,10 @@ module.exports = {
     runRemote: function(creep){ //TODO FIX ENERGY LESS ROOM FIXER
         try{
             if(creep.swapIfRequired()){
-                console.log("Creep: "+creep.name+" at: "+creep.pos+" swapping as required");
+                creep.log("Creep: "+creep.name+" at: "+creep.pos+" swapping as required");
                 return;
             }else{
-                console.log(creep.name+'No Need To Swap');
+                creep.log(creep.name+'No Need To Swap');
             }
             //FIND FLAGS FOR CONSTRUCTION
             var targetWallStrength = 200000;
@@ -65,7 +65,7 @@ module.exports = {
             creep.setInFlagMemory(flagName,"rbs");
             this.basicSetting(creep);
             //var constructionSites = roomMemory.getConstructionSites(flag.room);
-            //console.log('Creep: '+creep.name+ ' RemoteRoom: '+flag.room+' Sites:'+JSON.stringify(constructionSites));
+            //creep.log('Creep: '+creep.name+ ' RemoteRoom: '+flag.room+' Sites:'+JSON.stringify(constructionSites));
             var hostiles = roomMemory.getHostilesInRoom(creep.room);
 
             if(creep.shouldFlee(hostiles)){
@@ -86,14 +86,14 @@ module.exports = {
             }
             /*
              if(!destReached){
-             console.log('Builder: '+creep.name+' moving to:'+flag);
+             creep.log('Builder: '+creep.name+' moving to:'+flag);
              creep.moveTo(flag.pos);
              }
 
              */
             if(creep.memory.building){
                 //Get construction sites
-                console.log('Builder: '+creep.name+ ' Looking for tasks');
+                creep.log('Builder: '+creep.name+ ' Looking for tasks');
                 if((flag && 1==2) || creep.memory.remoteSourceRoom != null){
                     if(creep.pos.roomName != flag.pos.roomName){
                         creep.memory.destReached = false;
@@ -136,7 +136,7 @@ module.exports = {
                 if(!creep.room.controller){
                     var remoteSourceRoom = creep.memory.remoteSourceRoom;
                     if(remoteSourceRoom ){
-                        console.log("Moving To:"+remoteSourceRoom);
+                        creep.log("Moving To:"+remoteSourceRoom);
                         
                         var r= creep.moveTo(new RoomPosition(20,20,remoteSourceRoom));
                         creep.say('Fillinf up');
@@ -155,13 +155,13 @@ module.exports = {
                 var dest = null;
                 var nearestEnergy = droppedEnergy;
                 creep.memory.loading = true;
-                //console.log('RunRemote: '+JSON.stringify(droppedEnergy));
+                //creep.log('RunRemote: '+JSON.stringify(droppedEnergy));
                 //droppedEnergy = null;
                 if( droppedEnergy && droppedEnergy.length && droppedEnergy[0] && droppedEnergy[0].amount>20){///{//(droppedEnergy = utility.getNearestDroppedEnergy(creep)) && droppedEnergy>50){
                     creep.say('Pickup');
                     dest = creep.pos.findClosestByRange(droppedEnergy);
                     if(dest!=null){
-                        //console.log('COnt: '+dest+ ' en: '+dest.energy);
+                        //creep.log('COnt: '+dest+ ' en: '+dest.energy);
                         if(creep.pickup(dest)==ERR_NOT_IN_RANGE){
                             creep.say('B-Pickup');
                             creep.moveTo(dest,{reusePath:10 , maxRooms:0});
@@ -170,7 +170,7 @@ module.exports = {
                     }
                 }else if(nearestEnergy.length){
                     creep.say('NPickup');
-                   // console.log('NearestEnergy'+nearestEnergy);
+                   // creep.log('NearestEnergy'+nearestEnergy);
                     if(creep.pos.isNearTo(nearestEnergy)){
                         creep.withdraw(nearestEnergy, RESOURCE_ENERGY);
                     }else{
@@ -180,7 +180,7 @@ module.exports = {
                     containers.sort((a,b) => (a.store[RESOURCE_ENERGY] > b.store[RESOURCE_ENERGY]));
                     dest = containers[0];//creep.pos.findClosestByPath(containers);
                     if(dest!=null){
-                        //console.log('COnt: '+dest+ ' en: '+dest.energy);
+                        //creep.log('COnt: '+dest+ ' en: '+dest.energy);
                         creep.say('COnt');
                         if(creep.withdraw(dest, RESOURCE_ENERGY)==ERR_NOT_IN_RANGE){
                             creep.say('B-Pickup');
@@ -195,7 +195,7 @@ module.exports = {
                             return container.structureType == STRUCTURE_STORAGE && container.store[RESOURCE_ENERGY]>0}}) && roomStorage && roomStorage.length)){
                     dest = roomStorage[0];//creep.pos.findClosestByPath(containers);
                     if(dest!=null){
-                        //console.log('COnt: '+dest+ ' en: '+dest.energy);
+                        //creep.log('COnt: '+dest+ ' en: '+dest.energy);
                         if(creep.withdraw(dest, RESOURCE_ENERGY)==ERR_NOT_IN_RANGE){
                             creep.say('B-Pickup');
                             creep.moveTo(dest,{reusePath:10 , maxRooms:0});
@@ -209,7 +209,7 @@ module.exports = {
                     var sources = creep.room.find(FIND_SOURCES);
                     dest = creep.pos.findClosestByRange(sources);
                     if(dest!=null){
-                        //console.log('COnt: '+dest+ ' en: '+dest.energy);
+                        //creep.log('COnt: '+dest+ ' en: '+dest.energy);
                         if(creep.harvest(dest) == ERR_NOT_IN_RANGE) {
                             moveRes = creep.moveTo(dest,{reusePath:10 , maxRooms:0});
 
@@ -256,7 +256,7 @@ module.exports = {
          }*/
         //TODO Needs to use Room Based search after first target eval. (
         //TODO Needs to support destination room on a flag.
-        // console.log('Builder:'+creep.name+' Room:'+creep.room+' TargetWall'+roomMemory.getRoomTargetWallStrength(creep.room)+' TargetRampart: '+roomMemory.getRoomTargetRampartStrength(creep.room));
+        // creep.log('Builder:'+creep.name+' Room:'+creep.room+' TargetWall'+roomMemory.getRoomTargetWallStrength(creep.room)+' TargetRampart: '+roomMemory.getRoomTargetRampartStrength(creep.room));
 
         this.basicSetting(creep);
         var moveRes = 0;
@@ -299,18 +299,18 @@ module.exports = {
 
             var rampartRepairs = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {return structure.structureType == STRUCTURE_RAMPART && structure.hits <= targetRampartStrength}
         });
-            // console.log(targets);
+            // creep.log(targets);
             //if(target) {
 
             if (target) {
 
-                console.log(creep.name + ': Building' + target.pos);
+                creep.log(creep.name + ': Building' + target.pos);
                 if (creep.memory.target != null) {
                     var t = Game.getObjectById(creep.memory.target);
                     if (t != null && t.progress != t.progressTotal) {
                         target = Game.getObjectById(creep.memory.target);
                         creep.say('B->' + target.structureType);
-                        console.log('B->' + target.structureType + ' ' + target.pos);
+                        creep.log('B->' + target.structureType + ' ' + target.pos);
                     } else {
                         creep.memory.target = null;
                     }
@@ -353,10 +353,10 @@ module.exports = {
                 // urgentRepairs = urgentRepairs.sort( (a,b) => a.hits < b.hits);
                 //urgentRepairs = _.sortBy(urgentRepairs, function(r) { return r.hits});
                 var lowest = this.lowestHits(urgentRepairs);
-                //console.log('Get Lowest Repair'+JSON.stringify(lowest));
+                //creep.log('Get Lowest Repair'+JSON.stringify(lowest));
                 var dest = lowest ? lowest :urgentRepairs[0];
                 //var dest = urgentRepairs[0]; // creep.pos.findClosestByRange(urgentRepairs);
-                //console.log('Urgent Repairs: '+JSON.stringify(urgentRepairs));
+                //creep.log('Urgent Repairs: '+JSON.stringify(urgentRepairs));
                 creep.say('U-fix'+dest.hits ? dest.hits : '');
                 if (creep.repair(dest) == ERR_NOT_IN_RANGE) {
                     //moveRes = creep.moveTo(urgentRepairs[0]);
@@ -406,7 +406,7 @@ module.exports = {
                     if(err == ERR_NOT_IN_RANGE){
                         creep.moveTo(dest);
                     }
-                   //console.log('Upgrader LINKME'+err+' '+JSON.stringify(closestLink));
+                   //creep.log('Upgrader LINKME'+err+' '+JSON.stringify(closestLink));
                 }/*
                 if(creep.withdraw(closestEnergy,RESOURCE_ENERGY)==ERR_NOT_IN_RANGE){
                    creep.moveTo(dest); 
@@ -414,7 +414,7 @@ module.exports = {
             }else if(droppedEnergy){
                  dest = droppedEnergy;
                 if (dest != null) {
-                    //console.log('COnt: '+dest+ ' en: '+dest.energy);
+                    //creep.log('COnt: '+dest+ ' en: '+dest.energy);
                     if (creep.pickup(dest) == ERR_NOT_IN_RANGE) {
                         creep.say('B-Pickup');
                         creep.moveTo(dest,{reusePath:10 , maxRooms:0});
@@ -426,7 +426,7 @@ module.exports = {
             }else if((droppedEnergy = utility.getNearestDroppedEnergy(creep)) && droppedEnergy > 50) {
                 dest = droppedEnergy;
                 if (dest != null) {
-                    //console.log('COnt: '+dest+ ' en: '+dest.energy);
+                    //creep.log('COnt: '+dest+ ' en: '+dest.energy);
                     if (creep.pickup(dest) == ERR_NOT_IN_RANGE) {
                         creep.say('B-Pickup');
                         creep.moveTo(dest,{reusePath:10 , maxRooms:0});
@@ -434,7 +434,7 @@ module.exports = {
 
                 }
             } else if (nearestEnergy) {
-                console.log('NearestEnergy' + nearestEnergy);
+                creep.log('NearestEnergy' + nearestEnergy);
                 if (creep.pos.isNearTo(nearestEnergy)) {
                     creep.withdraw(nearestEnergy, RESOURCE_ENERGY);
                 } else {
@@ -444,7 +444,7 @@ module.exports = {
                 containers.sort((a, b) => (a.store[RESOURCE_ENERGY] > b.store[RESOURCE_ENERGY]));
                 dest = containers[0];//creep.pos.findClosestByPath(containers);
                 if (dest != null) {
-                    //console.log('COnt: '+dest+ ' en: '+dest.energy);
+                    //creep.log('COnt: '+dest+ ' en: '+dest.energy);
                     if (creep.withdraw(dest, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                         creep.say('B-Pickup');
                         creep.moveTo(dest,{reusePath:10 , maxRooms:0});
@@ -459,7 +459,7 @@ module.exports = {
             {
                 dest = roomStorage[0];//creep.pos.findClosestByPath(containers);
                 if (dest != null) {
-                    //console.log('COnt: '+dest+ ' en: '+dest.energy);
+                    //creep.log('COnt: '+dest+ ' en: '+dest.energy);
                     if (creep.withdraw(dest, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                         creep.say('B-Pickup');
                         creep.moveTo(dest,{reusePath:10 , maxRooms:0});
@@ -475,7 +475,7 @@ module.exports = {
                 var sources = creep.room.find(FIND_SOURCES);
                 dest = creep.pos.findClosestByRange(sources);
                 if (dest != null) {
-                    //console.log('COnt: '+dest+ ' en: '+dest.energy);
+                    //creep.log('COnt: '+dest+ ' en: '+dest.energy);
                     if (creep.harvest(dest) == ERR_NOT_IN_RANGE) {
                         moveRes = creep.moveTo(dest,{reusePath:10 , maxRooms:0});
 
@@ -506,7 +506,7 @@ module.exports = {
             }
             default:
                 //creep.say('MvErr:'+moveRes);
-                console.log('Sono: ' + creep.name + ' bloccato ');//verso: '+creep.moveTo(Game.flags.ParkingLot));
+                creep.log('Sono: ' + creep.name + ' bloccato ');//verso: '+creep.moveTo(Game.flags.ParkingLot));
                 break;
         }
         /*
@@ -527,18 +527,18 @@ module.exports = {
         var result = null;
         for(var ob in stuff){
             var o = stuff[ob];
-            //console.log('PLowest:'+JSON.stringify(o));
+            //creep.log('PLowest:'+JSON.stringify(o));
             if(low){
 
-                //console.log('PLowest: LV:'+low+' hits'+o.hits);
+                //creep.log('PLowest: LV:'+low+' hits'+o.hits);
                 if(low>o.hits){
-                   //console.log('PLowest: LV:'+low+' ob: '+o.structureType+'hits'+o.hits);
+                   //creep.log('PLowest: LV:'+low+' ob: '+o.structureType+'hits'+o.hits);
                
                     low = o.hits;
                     result = o;
                 }
             }else{
-                //console.log('PLowest: LV undefined:'+low+' ob: '+o.structureType+'hits'+o.hits);
+                //creep.log('PLowest: LV undefined:'+low+' ob: '+o.structureType+'hits'+o.hits);
                 low = o.hits;
                 result = o;
             }

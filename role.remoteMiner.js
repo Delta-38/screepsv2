@@ -31,7 +31,7 @@ var roleMiner = {
         var remoteMining = creep.memory.remoteMiningFlag;
         if(remoteMining){
             if(remoteMining && (remoteMining = Game.flags[remoteMining])){
-                //console.log('Remining'+JSON.stringify(remoteMining))
+                //creep.log('Remining'+JSON.stringify(remoteMining))
                 this.setInFlagMem(creep,remoteMining.name);
             }
             remoteMining = remoteMining; //Game.getObjectById(remoteMining);
@@ -44,8 +44,8 @@ var roleMiner = {
         if(!destReached){
             if(remoteMining){
              t = remoteMining;
-             //console.log(JSON.stringify(t));
-             //console.log('Remining'+JSON.stringify(t));
+             //creep.log(JSON.stringify(t));
+             //creep.log('Remining'+JSON.stringify(t));
              
               if(t.pos.x == creep.pos.x && t.pos.y == creep.pos.y && creep.pos.roomName == t.pos.roomName){
                  t = creep.pos.findClosestByPath(FIND_SOURCES); //RECHECK THIS LOGIC
@@ -60,7 +60,7 @@ var roleMiner = {
                 this.updateQuota(creep, actualMined);
                 creep.memory.destReached = true;
                 creep.memory.sourceInUse = t.id;
-                console.log('Completed mining');
+                creep.log('Completed mining');
             }else{
                 creep.say('D-GtoW2');
                 if(remoteMining){
@@ -68,17 +68,17 @@ var roleMiner = {
                     if(err!=0){
                         /*
                         if(err == ERR_NO_PATH){ //TODO This function needs some debugging
-                            console.log("A swap would be nice."+t);
+                            creep.log("A swap would be nice."+t);
                             var p = creep.room.findPath(creep.pos,t.pos,{ignoreCreeps:true});
-                            console.log("Got a path "+p);
+                            creep.log("Got a path "+p);
                             if(p && p.length){
                                 var nextStep = p[0];
-                                console.log('Path p0'+JSON.stringify(nextStep));
+                                creep.log('Path p0'+JSON.stringify(nextStep));
                                 if(nextStep){
                                     var res = creep.room.lookForAt(LOOK_CREEPS,new RoomPosition(nextStep.x,nextStep.y,creep.pos.roomName));
                                     if(res && res.length){
                                         var roadBlockingCreep = res[0];
-                                        console.log('Found Creep '+roadBlockingCreep);
+                                        creep.log('Found Creep '+roadBlockingCreep);
                                         roadBlockingCreep.memory.swapRequired = creep.pos;
                                         roadBlockingCreep.moveTo(creep.pos);
                                         var swapRes = creep.moveTo(nextStep);
@@ -88,13 +88,13 @@ var roleMiner = {
                             }
                         }*/
                     }
-                    console.log(creep.moveTo(t,{reusePath: 10}));
+                    creep.log(creep.moveTo(t,{reusePath: 10}));
                 }else{
-                   console.log( creep.moveTo(t,{reusePath: 10}));
+                   creep.log( creep.moveTo(t,{reusePath: 10}));
                 }
                     
             }       
-            console.log("RemoteMiner "+creep.name+"error state: "+err);
+            creep.log("RemoteMiner "+creep.name+"error state: "+err);
         }else if(destReached && source!=null){
             creep.harvest(source)==0; //TODO CREEP MIGHT NOT HAVE CARRY!!!
             //creep.say('H'+cap);
@@ -103,7 +103,7 @@ var roleMiner = {
              this.updateQuota(creep, actualMined);
 
             if(creep.carry.energy < creep.carryCapacity ){//&& source.energy>0){
-                //console.log('Harvesting Mine');
+                //creep.log('Harvesting Mine');
                if(creep.harvest(source)==0){
                     //creep.say('H'+cap);
                     //creep.say('16Tons');
@@ -140,7 +140,7 @@ var roleMiner = {
             creep.say('OOPS');
         }
     }catch(error){
-        console.log('Remote Miner error:'+error+' st:'+error.stack+' creepName:'+creep.name+' mem:'+JSON.stringify(creep.memory));
+        creep.log('Remote Miner error:'+error+' st:'+error.stack+' creepName:'+creep.name+' mem:'+JSON.stringify(creep.memory));
         Game.notify('Remote Miner error:'+error+' creepName:'+creep.name+' mem:'+JSON.stringify(creep.memory));
     }
     },
@@ -149,7 +149,7 @@ var roleMiner = {
         if(remoteMining){
             creep.setInFlagMemory(remoteMining,"remoteMiners");
         }else{
-            console.log("RemoteMining not set"+creep.name+" "+creep.memory);
+            creep.log("RemoteMining not set"+creep.name+" "+creep.memory);
         }
     }
 

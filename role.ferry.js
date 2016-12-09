@@ -12,7 +12,7 @@ var roleFerry = {
     run: function (creep) {
         try {
             if(creep.swapIfRequired()){
-                console.log("Creep: "+creep.name+" at: "+creep.pos+" swapping as required");
+                creep.log("Creep: "+creep.name+" at: "+creep.pos+" swapping as required");
                 return;
             }
             var remotePickup = creep.memory.remotePickup;
@@ -35,7 +35,7 @@ var roleFerry = {
                 var containers = creep.room.storage;
                 if(!containers){
                     containers = creep.room.find( FIND_STRUCTURES, {filter: (user) => { return (user.structureType == STRUCTURE_CONTAINER || user.structureType == STRUCTURE_STORAGE )}});
-                     console.log(JSON.stringify(containers));
+                     creep.log(JSON.stringify(containers));
                 remotePickup = Game.getObjectById(remotePickup);
 
                 creep.memory.remoteBase = containers[0].id;
@@ -72,17 +72,17 @@ var roleFerry = {
             }
 */
             if (loading) {
-                //console.log('HERE GOING'+creep.name);
+                //creep.log('HERE GOING'+creep.name);
                 var load  = 0;
                 for(var r in creep.carry){
                     load += creep.carry[r] ? creep.carry[r] : 0;
                 }
                 if (load < creep.carryCapacity) {
                     toBase = false;
-                    //console.log('HERE GOING1'+creep.name);
+                    //creep.log('HERE GOING1'+creep.name);
                     var destination = remotePickup;
                     if (!destination) {
-                        console.log('No Destination: looking for dropped energy' + creep.name + ' ' + destination);
+                        creep.log('No Destination: looking for dropped energy' + creep.name + ' ' + destination);
                         //CONVENTIONAL CONTAINER
                         var dropped = util.getDroppedEnergy(creep);
                         if (dropped) {
@@ -99,16 +99,16 @@ var roleFerry = {
 
 
                     } else {
-                       // console.log('HERE GOING3'+creep.name);
+                       // creep.log('HERE GOING3'+creep.name);
                         if (creep.pos.isNearTo(new RoomPosition(destination.x, destination.y, destination.roomName))) {
                             var res = creep.pickup(creep.pos.findClosestByRange(FIND_DROPPED_ENERGY));
                             if(res!=0){
-                                console.log('HERE GOING3'+creep.name+' pickup res:'+res);
+                                creep.log('HERE GOING3'+creep.name+' pickup res:'+res);
                         
 
                             }
                             var r = creep.pos.findInRange(FIND_STRUCTURES,1, {filter: (s) => s.structureType == STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE });
-                            console.log('HERE GOING3'+creep.name+' structs in range:'+JSON.stringify(r));
+                            creep.log('HERE GOING3'+creep.name+' structs in range:'+JSON.stringify(r));
                         
                             if(r && r.length){
                                 creep.withdraw(r[0],RESOURCE_ENERGY);
@@ -116,14 +116,14 @@ var roleFerry = {
                                 
                             }
 
-                            //   console.log('HERE GOING3'+creep.name+'res'+res);
+                            //   creep.log('HERE GOING3'+creep.name+'res'+res);
                         } else {
                             var moveRes = creep.moveTo(new RoomPosition(destination.x, destination.y, destination.roomName), {reusePath: reuseVal});
                             var r = creep.pos.findInRange(FIND_DROPPED_ENERGY,1);
                             if(r && r.length){
                                 creep.pickup(r[0]);
                             }
-                            //console.log('Creep '+creep.name+'Going: '+JSON.stringify(destination)+':'+moveRes);
+                            //creep.log('Creep '+creep.name+'Going: '+JSON.stringify(destination)+':'+moveRes);
                         }
                     }
                 } else {
@@ -135,20 +135,20 @@ var roleFerry = {
             }
 
             if (toBase) {
-                //console.log('HERE');
+                //creep.log('HERE');
                 if (!remoteBase && !remotePickup) {
-                    //console.log('HERE1');
+                    //creep.log('HERE1');
                     var rem = util.getLocalContainers(creep);
 
                     remoteBase = creep.pos.findClosestByRange(rem);
                 } else if (!remoteBase) {
-                    //console.log('HERE2');
+                    //creep.log('HERE2');
                     if(creep.room.storage!=null){
                         remoteBase = creep.room.storage;
                     }
 /*                    if ((tertiaryUsers = creep.room.find(FIND_STRUCTURES, {filter: (user) => {return (user.structureType == STRUCTURE_STORAGE) }}))!= null && tertiaryUsers.length > 0 )
                     {
-                        //console.log('Tertiary: '+JSON.stringify(tertiaryUsers)+'.');
+                        //creep.log('Tertiary: '+JSON.stringify(tertiaryUsers)+'.');
                         remoteBase = tertiaryUsers[0];
                     }*/
                 }
@@ -180,7 +180,7 @@ var roleFerry = {
 
 
         } catch (err) {
-            console.log('Error in ferry:\n' + err + '\n\n');
+            creep.log('Error in ferry:\n' + err + '\n\n');
 
 
         }
@@ -193,7 +193,7 @@ var roleFerry = {
         if(remoteFlagName){
             creep.setInFlagMemory(remoteFlagName,"ferries");
         }else{
-            console.log("Creep:"+creep.name+" remoteFlag not set");
+            creep.log("Creep:"+creep.name+" remoteFlag not set");
         }
     }
 

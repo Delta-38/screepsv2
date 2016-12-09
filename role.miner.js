@@ -39,14 +39,14 @@ var roleMiner = {
             var t = null;
             if (remoteMining) {
                 t = remoteMining;
-                //console.log('Remining' + JSON.stringify(t) + '\n' + JSON.stringify(creep.pos));
+                //creep.log('Remining' + JSON.stringify(t) + '\n' + JSON.stringify(creep.pos));
                 // if(t.pos.x == creep.pos.x && t.pos.y == creep.pos.y && creep.pos.roomName == t.pos.roomName){
                 t = creep.pos.findClosestByPath(FIND_SOURCES); //RECHECK THIS LOGIC
                 // }
             }else if(dest){
                 t = new RoomPosition(dest.x,dest.y,dest.roomName);
                 t = t.findClosestByPath(FIND_SOURCES);
-               // console.log('Going to mining post');
+               // creep.log('Going to mining post');
             } else {
                 t = creep.pos.findClosestByPath(FIND_SOURCES);
             }
@@ -60,17 +60,17 @@ var roleMiner = {
                 
                 
                 if (remoteMining) {
-                    console.log(creep.moveTo(Game.flags["HarvestRoom"]))
+                    creep.log(creep.moveTo(Game.flags["HarvestRoom"]))
                 } else {
-                    console.log(creep.moveTo(t));
+                    creep.log(creep.moveTo(t));
                 }
 
             }
-            console.log("Miner "+creep.name+"error state? :" + err);
+            creep.log("Miner "+creep.name+"error state? :" + err);
         } else if (destReached && source != null) {
             if (creep.carry.energy < creep.carryCapacity) {//&& source.energy>0){
                 
-                //console.log('Harvesting Mine');
+                //creep.log('Harvesting Mine');
                 if (creep.harvest(source) == 0) {
                     creep.say('RRR');
                        var cap = creep.getActiveBodyparts(WORK)*2;

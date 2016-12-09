@@ -572,12 +572,12 @@
 			if(tower){
 			for(var t in tower){
 				t= tower[t];
-				console.log('Tower Energy: '+t.energy);
 				if(t.energy > 0){
 				//console.log('hey:'+JSON.stringify());//Game.rooms[.name]));//[t.room]);
 				var hostilesFound = utility.findHostileCreeps(t.room);
 				if(hostilesFound && hostilesFound.length>0){
-					shootHostiles(t,hostilesFound);
+                    console.log('Tower Energy: '+t.energy);
+                    shootHostiles(t,hostilesFound);
 				}else{
 				repairNetwork(t);
 				healFriendlies(t);

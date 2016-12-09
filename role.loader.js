@@ -2,13 +2,13 @@ var util = require('utility');
 var roleLoader = {
     transferStuff:function(creep){
         var t = this.getTarget(creep);
-        //console.log(creep.name+'Loader Debug: 1Creep full' + t);
+        //creep.log(creep.name+'Loader Debug: 1Creep full' + t);
         if(!t){
             creep.say('Secondary');
             t = this.getTarget(creep,true);
         }
         creep.say(t && t.structureType ? t.structureType : "Null Target");
-        // console.log(creep.name+'Loader Debug: 2Creep full' + JSON.stringify(t));
+        // creep.log(creep.name+'Loader Debug: 2Creep full' + JSON.stringify(t));
 
         var res = creep.transfer(t, RESOURCE_ENERGY);
 
@@ -16,12 +16,12 @@ var roleLoader = {
 
     performDuty: function (creep) {
         try{
-        //console.log('Loader Debug: Duty 0');
+        //creep.log('Loader Debug: Duty 0');
         if (creep.carry.energy < creep.carryCapacity) {
-            //console.log('Loader Debug: Duty 1');
+            //creep.log('Loader Debug: Duty 1');
             var source = this.getSource(creep);
             if (source) {
-                //console.log('Loader Debug: Duty2');
+                //creep.log('Loader Debug: Duty2');
                 if(source.structureType != null){
                     creep.say(source.structureType+'Struct');
                     var res = creep.withdraw(source, RESOURCE_ENERGY);
@@ -42,26 +42,26 @@ var roleLoader = {
                 if(res == ERR_INVALID_TARGET){
                     res = creep.pickup(source);
                 }*/
-                //console.log('Result of loading: ' + res);
+                //creep.log('Result of loading: ' + res);
             } else {
                 //creep.say('Nothing to do');
             }
         } else {
 
             this.transferStuff(creep);
-            // console.log(creep.name+'Transfer in progress:' +res );
+            // creep.log(creep.name+'Transfer in progress:' +res );
 
         }
 
-       // console.log('Loader Debug: Determined Source: ' + this.getSource(creep));
-       // console.log('Loader Debug: Determined Target' + this.getTarget(creep));
+       // creep.log('Loader Debug: Determined Source: ' + this.getSource(creep));
+       // creep.log('Loader Debug: Determined Target' + this.getTarget(creep));
 
         /*
          var target = this.getTarget(creep);
-         console.log('Loader Debug: 3');
+         creep.log('Loader Debug: 3');
          var transferRes = creep.transfer(target,RESOURCE_ENERGY);
-         console.log('Transfer Result'+transferRes);
-         console.log('Loader Debug: 4');
+         creep.log('Transfer Result'+transferRes);
+         creep.log('Loader Debug: 4');
          */
         //IDENTIFY SOURCES
 
@@ -81,7 +81,7 @@ var roleLoader = {
     },
 
     mobileMode:function(creep){
-        console.log('Loader Debug: ' + dest + ' destpos:' + destPos + 'creep.pos:' + creep.pos + ' equal?' + creep.pos.isEqualTo(destPos));
+        creep.log('Loader Debug: ' + dest + ' destpos:' + destPos + 'creep.pos:' + creep.pos + ' equal?' + creep.pos.isEqualTo(destPos));
 
         //IF AT DEST & !LOADED THEN GO FETCH
 
@@ -117,33 +117,33 @@ var roleLoader = {
 
     stillMode:function(creep){
         var destinationReached = creep.memory.destinationReached;
-        //console.log('Loader Debug: ' + dest + ' destpos:' + destPos + 'creep.pos:' + creep.pos + ' equal?' + creep.pos.isEqualTo(destPos));
+        //creep.log('Loader Debug: ' + dest + ' destpos:' + destPos + 'creep.pos:' + creep.pos + ' equal?' + creep.pos.isEqualTo(destPos));
         if (!destinationReached) {
             var dest = creep.memory.dest;
             var destPos = new RoomPosition(dest.x, dest.y, dest.roomName);
             if (creep.pos.isEqualTo(destPos)) {
                 creep.memory.destinationReached = true;
                 destinationReached = true;
-                console.log('Loader Debug: destination reached');
+                creep.log('Loader Debug: destination reached');
 
             }
         }
         
         if (destinationReached) {
-            //console.log('Loader Debug: Performing Duty');
+            //creep.log('Loader Debug: Performing Duty');
             this.performDuty(creep);
         } else {
             var dist = creep.pos.getRangeTo(destPos);
-            //console.log('Loader moving: ' + destPos + ' distance:' + dist);
+            //creep.log('Loader moving: ' + destPos + ' distance:' + dist);
             var r = creep.moveTo(destPos);
-            //console.log('Loader moveres' + r);
+            //creep.log('Loader moveres' + r);
         }
     },
 
     getTarget: function (creep,secondary) {
         try{
         var targets = this.getTargets(creep,secondary);
-        //console.log('Loader: '+creep.name+'Targets: ' + JSON.stringify(targets));
+        //creep.log('Loader: '+creep.name+'Targets: ' + JSON.stringify(targets));
         if (targets && targets.length) {
             if(secondary){
                 targets =  _.sortBy( targets, target => target.store && target.store.energy);//targets.sort( (a,b) => { (a.store.energy < b.store.energy) });
@@ -153,7 +153,7 @@ var roleLoader = {
                 targets = _.sortBy( targets, target => target.energy-target.energyCapacity);
                 return targets[0];            
             }
-          // console.log('Sorted Targets: ' + JSON.stringify(targets));
+          // creep.log('Sorted Targets: ' + JSON.stringify(targets));
             
         } else {
             return null;
@@ -169,14 +169,14 @@ var roleLoader = {
         var targets = creep.memory.targets;
         var sTargets = creep.memory.secondaryTargets;
         if (!targets || (targets && targets.length == 0)) {
-            //console.log('Looking for targets:');
+            //creep.log('Looking for targets:');
             var near = creep.pos.findInRange(FIND_STRUCTURES, 1);
             var validTargets = [];
             var validTargetsIds = [];
             var validSecondaryTargets = [];
             var validSecondaryTargetsIds = [];
 
-            //console.log('Loader Debug: RawTargets: '+JSON.stringify(near));
+            //creep.log('Loader Debug: RawTargets: '+JSON.stringify(near));
             if (near) {
                 for (var v in near) {
                     var o = near[v];
@@ -188,21 +188,21 @@ var roleLoader = {
                         }else{
                             validTargets.push(o);
                             validTargetsIds.push(o.id);
-                        }//console.log('Valid Target: '+JSON.stringify(o));
+                        }//creep.log('Valid Target: '+JSON.stringify(o));
                     }else if((o.structureType == STRUCTURE_CONTAINER || o.structureType == STRUCTURE_STORAGE || o.structureType == STRUCTURE_TERMINAL)){
                         validSecondaryTargets.push(o);
                         validSecondaryTargetsIds.push(o.id);
                     } else {
-                        //console.log('Invalid Target: '+JSON.stringify(o));
+                        //creep.log('Invalid Target: '+JSON.stringify(o));
                     }
                         
                     }else{
                         //How did we get invalid objects in Near?
-                        console.log('Invalid objects in targets');
+                        creep.log('Invalid objects in targets');
                     }
                 }
             } else {
-                //console.log('Loader Debug no valid targets near creep');
+                //creep.log('Loader Debug no valid targets near creep');
             }
             creep.memory.targets = validTargetsIds;
             creep.memory.secondaryTargets = validSecondaryTargetsIds;
@@ -223,7 +223,7 @@ var roleLoader = {
                     }
                 }
             }
-          //  console.log('Valid Targets:'+JSON.stringify(validTargets));
+          //  creep.log('Valid Targets:'+JSON.stringify(validTargets));
             return validTargets;
         }
             
@@ -249,14 +249,14 @@ var roleLoader = {
            return null;
            
        }
-     //  console.log('Loader dropped energy:'+creep.name+ ' '+JSON.stringify(droppedEnergy));
-    //   console.log('Loader drop in range: '+creep.name+ ' '+creep.pos.findInRange(droppedEnergy,1));
+     //  creep.log('Loader dropped energy:'+creep.name+ ' '+JSON.stringify(droppedEnergy));
+    //   creep.log('Loader drop in range: '+creep.name+ ' '+creep.pos.findInRange(droppedEnergy,1));
         
     },
 
     getLink:function(creep){
         var link = creep.pos.findInRange(STRUCTURE_LINK, 1);
-       // console.log('\n\n\n LInk: '+JSON.stringify(link)+'\n\n\n');
+       // creep.log('\n\n\n LInk: '+JSON.stringify(link)+'\n\n\n');
         return link;
     },
 
@@ -266,7 +266,7 @@ var roleLoader = {
             validSources.sort((a, b) => {a.store[RESOURCE_ENERGY] > b.store[RESOURCE_ENERGY]});
             return validSources[0];
         } else {
-            console.log('Loader Debug: No valid sources.');
+            creep.log('Loader Debug: No valid sources.');
             return null;
         }
     },
@@ -289,14 +289,14 @@ creep.say('src');
             validSources.sort((a, b) => {a.store[RESOURCE_ENERGY] > b.store[RESOURCE_ENERGY]});
             return validSources[0];
         } else {
-            console.log('Loader Debug: No valid sources.');
+            creep.log('Loader Debug: No valid sources.');
            
             return null;
         }
     },
     getSources: function (creep,near) {
         if (!creep.memory.validSources) {
-          //  console.log('Loader Debug: Looking for sources');
+          //  creep.log('Loader Debug: Looking for sources');
             var validSources = [];
             var validSourcesIds = [];
             var r = near ? creep.pos.findInRange(FIND_STRUCTURES,1) : creep.room.find(FIND_STRUCTURES);
@@ -304,7 +304,7 @@ creep.say('src');
             for (var s in r) {
                 s = r[s];
                 if (s && s.structureType == STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE ) {
-                //    console.log(creep.memory.flagName+'Loader Debug found source: '+JSON.stringify(s));
+                //    creep.log(creep.memory.flagName+'Loader Debug found source: '+JSON.stringify(s));
                     validSources.push(s);
                     validSourcesIds.push(s.id);
                 }
@@ -313,7 +313,7 @@ creep.say('src');
             return validSources;
         } else {
             var sources = creep.memory.validSources;
-          //  console.log('Loader Debug: Memorised sources: '+sources);
+          //  creep.log('Loader Debug: Memorised sources: '+sources);
             var validSources = [];
             for (var s in sources) {
                 var o = Game.getObjectById(sources[s]);

@@ -68,6 +68,21 @@ module.exports = function(){
         }
     };
 
+    Flag.prototype.setCreepLogging = function(newVal){
+        this.memory.creepLogging = newVal;
+    };
+    Flag.prototype.creepLogging = function(){
+        var logging = this.memory.creepLogging;
+        if(logging === undefined){
+            this.memory.creepLogging = false;
+        }
+        return logging;
+    };
+    Flag.prototype.log = function(message){
+        if(this.creepLogging()){
+            console.log(message);
+        }
+    };
 
 
     //Other functions to implement

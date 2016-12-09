@@ -81,7 +81,7 @@ var utility = require('utility');
                     }
         });*/
             
-        //console.log('Targets: '+targets);
+        //creep.log('Targets: '+targets);
         /*var targets = creep.room.find(FIND_STRUCTURES, {filter : (structure) => { 
             return (structure.structureType == STRUCTURE_EXTENSION || 
                     structure.structureType == STRUCTURE_SPAWN || 
@@ -104,7 +104,7 @@ var utility = require('utility');
 	            }
 	        }
 	        //TODO THREE ALERT LEVELS PEACE SKIRMISH WAR (NO ENEMY CREEPS AND LASTING PEACE IN ROOM) (NPC INVADERS) (PLAYER UNITS ALERT FOR 500ticks after they're gone.) //WRITE CODE TO MAN RAMPARTS
-	        //console.log('Creep: '+creep.name+' loading');
+	        //creep.log('Creep: '+creep.name+' loading');
             var droppedEnergy = roomMemory.getDroppedEnergy(creep.room);
 //            droppedEnergy = creep.room.find(FIND_DROPPED_ENERGY);
 	        var dest = null;
@@ -135,7 +135,7 @@ var utility = require('utility');
                     if(err == ERR_NOT_IN_RANGE){
                         creep.moveTo(dest);
                     }
-                   //console.log('Upgrader LINKME'+err+' '+JSON.stringify(closestLink));
+                   //creep.log('Upgrader LINKME'+err+' '+JSON.stringify(closestLink));
                 }else{
                     creep.say("W:"+closestLink);
                 }/*
@@ -143,22 +143,22 @@ var utility = require('utility');
                    creep.moveTo(dest); 
                 }*/
             }else{
-	            //console.log('Sources:'+JSON.stringify(utility.getLocalSources(creep)));
+	            //creep.log('Sources:'+JSON.stringify(utility.getLocalSources(creep)));
 	            var roomStorage = null;
 	            //var containers = creep.room.find( FIND_STRUCTURES, {filter: (container) => { return ((container.structureType == STRUCTURE_CONTAINER) || (container.structureType == STRUCTURE_STORAGE)) && (container.store[RESOURCE_ENERGY]>0) }});
     	        var containers = utility.getLocalContainers(creep,false);
     	        containers = (containers && containers.length) ? containers : utility.getLocalContainers(creep,false);
     	        var dest = null;
     	        creep.memory.loading = true;
-    	        //console.log('Containers: '+JSON.stringify(containers));
+    	        //creep.log('Containers: '+JSON.stringify(containers));
                  var miners = _.filter(Game.creeps, (creep) => creep.memory.role == 'miner');
                  var closestEnergy = utility.getNearestEnergy(creep);
-                // console.log('Harvester: '+creep.name+' getnearestenergy'+utility.getNearestEnergy(creep));
+                // creep.log('Harvester: '+creep.name+' getnearestenergy'+utility.getNearestEnergy(creep));
                 if(closestEnergy){
                     dest = closestEnergy;
                     if(dest!=null){
-	                //console.log('COnt: '+dest+ ' en: '+dest.energy);
-	                //console.log('Withdraw range: '+);
+	                //creep.log('COnt: '+dest+ ' en: '+dest.energy);
+	                //creep.log('Withdraw range: '+);
                     if(creep.pos.isNearTo(dest)){
                         var res = creep.withdraw(dest, RESOURCE_ENERGY);
                     }else{
@@ -173,14 +173,14 @@ var utility = require('utility');
                 }else if(containers!=null && containers.length>0){
     	            containers = _.sortBy(containers, container => 0-container.store.energy );
 //                    targets = _.sortBy( targets, target => target.energy-target.energyCapacity);
-                    //console.log('CONTAINER SORT: '+JSON.stringify(containers));
+                    //creep.log('CONTAINER SORT: '+JSON.stringify(containers));
                     
     	           // containers.sort((a,b)=>( a.store[RESOURCE_ENERGY]>b.store[RESOURCE_ENERGY]));
     	            //dest = containers[0];
     	            dest = creep.pos.findClosestByPath(containers);
     	            if(dest!=null){
-    	                //console.log('COnt: '+dest+ ' en: '+dest.energy);
-    	                //console.log('Withdraw range: '+);
+    	                //creep.log('COnt: '+dest+ ' en: '+dest.energy);
+    	                //creep.log('Withdraw range: '+);
                         if(creep.pos.isNearTo(dest)){
                             var res = creep.withdraw(dest, RESOURCE_ENERGY);
                         }else{
@@ -195,7 +195,7 @@ var utility = require('utility');
     	        }else if((roomStorage = utility.getNonEmptyStorage(creep))&& roomStorage && roomStorage.length){
     	            dest = roomStorage[0];//creep.pos.findClosestByPath(containers);
     	            if(dest!=null){
-    	                //console.log('COnt: '+dest+ ' en: '+dest.energy);
+    	                //creep.log('COnt: '+dest+ ' en: '+dest.energy);
         	            if(creep.withdraw(dest, RESOURCE_ENERGY)==ERR_NOT_IN_RANGE){
         	                creep.say('Storage Pickup');
         	                creep.moveTo(dest,{reusePath:10 , maxRooms:0});
@@ -211,10 +211,10 @@ var utility = require('utility');
 //        	        var source = utility.getNearestSource(creep);
         	        var source = creep.room.find(FIND_SOURCES);
         	        source = creep.pos.findClosestByPath(source);
-        	        console.log('The Source: '+source);
+        	        creep.log('The Source: '+source);
                     dest = source;//creep.pos.findClosestByRange(sources);
                     if(dest!=null){
-                        //console.log('Source: '+dest+ ' en: '+dest.energy);
+                        //creep.log('Source: '+dest+ ' en: '+dest.energy);
                         var near = creep.pos.isNearTo(dest);
                         if(near){
                             creep.harvest(dest);
@@ -243,7 +243,7 @@ var utility = require('utility');
                     dest = creep.pos.findClosestByRange(FIND_SOURCES);
                     //dest = creep.pos.findClosestByRange(sources);
                     if(dest!=null){
-                        //console.log('Source: '+dest+ ' en: '+dest.energy);
+                        //creep.log('Source: '+dest+ ' en: '+dest.energy);
                         if(creep.harvest(dest) == ERR_NOT_IN_RANGE) {
                             moveRes = creep.moveTo(dest,{reusePath:10 , maxRooms:0});
         	                creep.memory.destination = dest.id;
@@ -268,7 +268,7 @@ var utility = require('utility');
               var secondaryUsers = null;
               var tertiaryUsers = null;
               var destination = null;
-              //console.log('Primary: '+JSON.stringify(primaryUsers)+'.');
+              //creep.log('Primary: '+JSON.stringify(primaryUsers)+'.');
                 if(primaryUsers && primaryUsers.length>0){
                     destination = creep.pos.findClosestByPath(primaryUsers);
 //                    destination = primaryUsers[0];
@@ -278,7 +278,7 @@ var utility = require('utility');
               var secondaryUsers = creep.room.find( FIND_STRUCTURES, {filter: (user) => { return (user.structureType == STRUCTURE_TOWER) && user.energy < 300}});
               var tertiaryUsers = null;
               var destination = null;
-              //console.log('Primary: '+JSON.stringify(primaryUsers)+'.');
+              //creep.log('Primary: '+JSON.stringify(primaryUsers)+'.');
                 if(secondaryUsers != null && secondaryUsers.length>0){
                     destination = creep.pos.findClosestByRange(secondaryUsers);
                 }else if(primaryUsers && primaryUsers.length>0){
@@ -286,7 +286,7 @@ var utility = require('utility');
 //                    destination = primaryUsers[0];
                 }*/
                 else if((secondaryUsers =creep.room.find( FIND_STRUCTURES, {filter: (user) => { return (user.structureType == STRUCTURE_TOWER) && user.energy < user.energyCapacity}}))!=null && secondaryUsers.length>0){
-                    //console.log('Secondary: '+JSON.stringify(secondaryUsers)+'.');
+                    //creep.log('Secondary: '+JSON.stringify(secondaryUsers)+'.');
     //                destination = secondaryUsers.sort( (a,b) => { a.energy < b.energy});
 //                    destination = creep.pos.findClosestByRange(secondaryUsers);
                     destination = creep.pos.findClosestByRange(secondaryUsers);
@@ -296,13 +296,13 @@ var utility = require('utility');
                 }else if(creep.room.storage){
                      destination = creep.room.storage;
                 }else if((tertiaryUsers =creep.room.find( FIND_STRUCTURES, { filter: (user) => { return (user.structureType == STRUCTURE_STORAGE || user.structureType == STRUCTURE_CONTAINER) }}))!=null && tertiaryUsers.length>0){
-                    //console.log('Tertiary: '+JSON.stringify(tertiaryUsers)+'.');
+                    //creep.log('Tertiary: '+JSON.stringify(tertiaryUsers)+'.');
                     destination = tertiaryUsers[0];
                 }
-                //console.log('Destination:'+destination);    
+                //creep.log('Destination:'+destination);    
                 if(destination!=null){
                     var near = creep.pos.isNearTo(destination);
-                    //console.log('Harvester: Range to Destination: '+creep.pos.isNearTo(destination));
+                    //creep.log('Harvester: Range to Destination: '+creep.pos.isNearTo(destination));
                     if(near){
                         creep.transfer(destination,RESOURCE_ENERGY);
                     }else{
@@ -317,19 +317,19 @@ var utility = require('utility');
                             parkingFlags.push(f.pos);
                         }
                     }
-                    //console.log('Parking QUERY RES: '+JSON.stringify(parkingFlags)+'\n\n\n\n\n\n\n');
+                    //creep.log('Parking QUERY RES: '+JSON.stringify(parkingFlags)+'\n\n\n\n\n\n\n');
                     if(parkingFlags && parkingFlags.length){
                     creep.say('parking');
                        //var a = creep.pos.findClosestByRange(parkingFlags);
-                       //console.log('Closest Flag: '+a);
-                       console.log(creep.moveTo(parkingFlags[0]));
+                       //creep.log('Closest Flag: '+a);
+                       creep.log(creep.moveTo(parkingFlags[0]));
                     }else{
                         creep.say('No Task');
                     }
                     //creep.moveTo(Game.flags.ParkingLot);
                 }
             }catch(err){
-                console.log('Ex'+err);
+                creep.log('Ex'+err);
             }
 	}
         
@@ -343,7 +343,7 @@ var utility = require('utility');
         var tertiary = [];
         var structure;
         for(structure of localStructures){
-            console.log('Structure pos'+structure.pos);
+            creep.log('Structure pos'+structure.pos);
             var t = structure.structureType;
             if( t == STRUCTURE_LINK){
                 
@@ -374,7 +374,7 @@ var utility = require('utility');
               var secondaryUsers = null;
               var tertiaryUsers = null;
               var destination = null;
-              //console.log('Primary: '+JSON.stringify(primaryUsers)+'.');
+              //creep.log('Primary: '+JSON.stringify(primaryUsers)+'.');
               if(lowTowers && lowTowers.length){
                   creep.say('Towers');
                   destination = creep.pos.findClosestByRange(lowTowers);
@@ -384,7 +384,7 @@ var utility = require('utility');
 //                    destination = primaryUsers[0];
                 }
                 else if((secondaryUsers =creep.room.find( localStructures, {filter: (user) => { return (user.structureType == STRUCTURE_TOWER) && user.energy < user.energyCapacity}}))!=null && secondaryUsers.length>0){
-                    //console.log('Secondary: '+JSON.stringify(secondaryUsers)+'.');
+                    //creep.log('Secondary: '+JSON.stringify(secondaryUsers)+'.');
     //                destination = secondaryUsers.sort( (a,b) => { a.energy < b.energy});
 //                    destination = creep.pos.findClosestByRange(secondaryUsers);
                     destination = creep.pos.findClosestByRange(secondaryUsers);
@@ -395,13 +395,13 @@ var utility = require('utility');
                     creep.say('Stor'+localStructures);
                      destination = creep.room.storage;
                 }else if((tertiaryUsers =creep.room.find( FIND_STRUCTURES, { filter: (user) => { return (user.structureType == STRUCTURE_STORAGE || user.structureType == STRUCTURE_CONTAINER) }}))!=null && tertiaryUsers.length>0){
-                    //console.log('Tertiary: '+JSON.stringify(tertiaryUsers)+'.');
+                    //creep.log('Tertiary: '+JSON.stringify(tertiaryUsers)+'.');
                     destination = tertiaryUsers[0];
                 }
-                //console.log('Destination:'+destination);    
+                //creep.log('Destination:'+destination);    
                 if(destination!=null){
                     var near = creep.pos.isNearTo(destination);
-                    //console.log('Harvester: Range to Destination: '+creep.pos.isNearTo(destination));
+                    //creep.log('Harvester: Range to Destination: '+creep.pos.isNearTo(destination));
                     if(near){
                         creep.transfer(destination,RESOURCE_ENERGY);
                     }else{
@@ -416,12 +416,12 @@ var utility = require('utility');
                             parkingFlags.push(f.pos);
                         }
                     }
-                    //console.log('Parking QUERY RES: '+JSON.stringify(parkingFlags)+'\n\n\n\n\n\n\n');
+                    //creep.log('Parking QUERY RES: '+JSON.stringify(parkingFlags)+'\n\n\n\n\n\n\n');
                     if(parkingFlags && parkingFlags.length){
                     creep.say('parking');
                        //var a = creep.pos.findClosestByRange(parkingFlags);
-                       //console.log('Closest Flag: '+a);
-                       console.log(creep.moveTo(parkingFlags[0]));
+                       //creep.log('Closest Flag: '+a);
+                       creep.log(creep.moveTo(parkingFlags[0]));
                     }else{
                         creep.say('No Task');
                     }
@@ -429,7 +429,7 @@ var utility = require('utility');
                 }
             }catch(err){
                 creep.say('RefErr:'+err);
-                console.log('Ex'+err);
+                creep.log('Ex'+err);
                 Game.notify("Error in harvester refillStuff func: "+err);
             }
         

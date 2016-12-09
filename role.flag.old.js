@@ -65,7 +65,7 @@ var roleFlag = {
         
         var dest = flag.memory.dest ? Game.getObjectById(flag.memory.dest) : null;
         if(!dest) {
-            this.pdeb("Flag: "+flag.name+" no destination set");
+            flag.log("Flag: "+flag.name+" no destination set");
             return;
         }
         var res = null;
@@ -90,14 +90,14 @@ var roleFlag = {
         var origin = flag.pos;
         var destination = dest;
         try{
-            this.pdeb('RoadMaint: '+flag.name);
+            flag.log('RoadMaint: '+flag.name);
             var path = this.buildPath(origin,destination);
-            this.pdeb('Flag:'+flag.name+' O:'+origin+' D:'+destination+' path:'+path);
+            flag.log('Flag:'+flag.name+' O:'+origin+' D:'+destination+' path:'+path);
             if(path != null){
                 var actualPath = path.path;
                 this.buildRoads(actualPath);
             }else{
-                this.pdeb('Error in roadMaintenance for flag:'+flag.name+' No valid path found');
+                flag.log('Error in roadMaintenance for flag:'+flag.name+' No valid path found');
                 Game.notify('Error in roadMaintenance for flag:'+flag.name+' No valid path found');
             }
             
@@ -199,9 +199,9 @@ var roleFlag = {
                 }else{
                     spawner =  this.getSpawner(flag);
                 }
-            this.pdeb('Flag: '+flag.name+' Need a raider, spawner: '+spawner);
+            flag.log('Flag: '+flag.name+' Need a raider, spawner: '+spawner);
             if(spawner.spawning){
-                this.pdeb('Attack Flag: Spawner busy');
+                flag.log('Attack Flag: Spawner busy');
             }else{
             var body = flag.memory.useHeavy ? [MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,RANGED_ATTACK] : [MOVE,MOVE,ATTACK,RANGED_ATTACK];
                 
@@ -212,15 +212,15 @@ var roleFlag = {
                     var res = spawner.createCreep(body,undefined,{
                         role: 'military', subRole: 'raider', flagName: flag.name , dest : flag.pos
                     });
-                    this.pdeb('Flag:'+flag.name+' Raid Flag: Spawn Res: '+res);
+                    flag.log('Flag:'+flag.name+' Raid Flag: Spawn Res: '+res);
                 }else{
-                    this.pdeb('Flag:'+flag.name+' Raid Flag: err'+err);
+                    flag.log('Flag:'+flag.name+' Raid Flag: err'+err);
                 }
             }
             
             
         }else{
-            //this.pdeb('Flag:'+flag.name+ ' Have a raider!'+JSON.stringify(raider));
+            //flag.log('Flag:'+flag.name+ ' Have a raider!'+JSON.stringify(raider));
         }
         
         
@@ -246,9 +246,9 @@ var roleFlag = {
                 }else{
                     spawner =  this.getSpawner(flag);
                 }
-            this.pdeb('Flag: '+flag.name+' Need a raider, spawner: '+spawner);
+            flag.log('Flag: '+flag.name+' Need a raider, spawner: '+spawner);
             if(spawner.spawning){
-                this.pdeb('Attack Flag: Spawner busy');
+                flag.log('Attack Flag: Spawner busy');
             }else{
             var body = flag.memory.useHeavy ? [MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,RANGED_ATTACK] : [MOVE,MOVE,ATTACK,RANGED_ATTACK];
                 
@@ -259,15 +259,15 @@ var roleFlag = {
                     var res = spawner.createCreep(body,undefined,{
                         role: 'military', subRole: 'raider', flagName: flag.name , dest : flag.pos
                     });
-                    this.pdeb('Flag:'+flag.name+' Raid Flag: Spawn Res: '+res);
+                    flag.log('Flag:'+flag.name+' Raid Flag: Spawn Res: '+res);
                 }else{
-                    this.pdeb('Flag:'+flag.name+' Raid Flag: err'+err);
+                    flag.log('Flag:'+flag.name+' Raid Flag: err'+err);
                 }
             }
             
             
         }else{
-            //this.pdeb('Flag:'+flag.name+ ' Have a raider!'+JSON.stringify(raider));
+            //flag.log('Flag:'+flag.name+ ' Have a raider!'+JSON.stringify(raider));
         }
         
         
@@ -394,7 +394,7 @@ var roleFlag = {
         }
         if(Game.time%10 == 0 && remoteBase){
             var ob = Game.getObjectById(remoteBase);
-            this.pdeb('Building Roads: Flag:'+flag.name+' to:'+ob.pos);
+            flag.log('Building Roads: Flag:'+flag.name+' to:'+ob.pos);
              this.roadMaintenance(flag,ob.pos);
             
         }else{
@@ -443,15 +443,15 @@ var roleFlag = {
     summonHealer:function(flag){
 
         var healer = _.filter(Game.creeps, function(creep) { creep.memory.role == 'military' && creep.memory.subRole == 'healer' && creep.memory.flagName == flag.name });
-        this.pdeb('Healer Pop: '+JSON.stringify(healer));
+        flag.log('Healer Pop: '+JSON.stringify(healer));
         if(healer && healer.length<1){
             var body = [HEAL,MOVE];
             var sp = this.getSpawner(flag);
             var body = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
             var err = sp.createCreep(body,undefined,{ role:'military', subRole: 'healer' , flagName: flag.name , dest: flag.pos });
-            this.pdeb('Error: '+err);
+            flag.log('Error: '+err);
             //var res = sp.createCreep(body,undefined,{ role:'military', subRole: 'healer' , flagName: flag.name , dest: flag.pos });
-            // this.pdeb('Debugging Heal Summon: Healers: '+healers.length+'Res:'+res);
+            // flag.log('Debugging Heal Summon: Healers: '+healers.length+'Res:'+res);
         }else{
 
         }
@@ -459,7 +459,7 @@ var roleFlag = {
     },
 
     runGuardRoom:function(flag){
-        //this.pdeb('Defense flag: start');
+        //flag.log('Defense flag: start');
         var peaceTime = flag.memory.peace;
         /*if(peaceTime && Game.time%5!=0){
          return;
@@ -471,7 +471,7 @@ var roleFlag = {
         }
 
         var danger = this.roomDangerCheck(flag);
-        //this.pdeb('Guard flag: dLeve:'+danger);
+        //flag.log('Guard flag: dLeve:'+danger);
 
         flag.memory.alert = true;
         //Send Message to Human
@@ -510,7 +510,7 @@ var roleFlag = {
             var sp = this.getSpawner(flag);
             var err = 0;
             err = sp.createCreep([TOUGH,TOUGH,HEAL,HEAL,MOVE,MOVE,MOVE,MOVE],undefined,{ role:'military' , subRole : 'healer' , flagName :flag.name, dest : flag.pos});
-            this.pdeb('GuardRoom Flag Healer res: '+err);
+            flag.log('GuardRoom Flag Healer res: '+err);
 
         }else if(defenders && defenders.length>=2){
 
@@ -547,7 +547,7 @@ var roleFlag = {
     },
 
     runDefend:function(flag){
-        this.pdeb('Defense flag: start'+flag.name);
+        flag.log('Defense flag: start'+flag.name);
         var peaceTime = flag.memory.peace;
         /*if(peaceTime && Game.time%5!=0){
          return;
@@ -559,7 +559,7 @@ var roleFlag = {
         }
 
         var danger = this.roomDangerCheck(flag);
-        //this.pdeb('Defense flag: dLeve:'+danger);
+        //flag.log('Defense flag: dLeve:'+danger);
         if(danger){
             flag.memory.alert = true;
             //Send Message to Human
@@ -582,9 +582,9 @@ var roleFlag = {
             //Have Defenders?
             //call for response
             //var ferries =   _.filter(Game.creeps, (creep) => creep.memory.role == 'ferry' && creep.memory.remotePickup.x == flag.pos.x && creep.memory.remotePickup.y == flag.pos.y && flag.pos.roomName == creep.memory.remotePickup.roomName);
-            console.log('Might need defenders');
+            flag.log('Might need defenders');
             var defenders = _.filter(Game.creeps, function(creep) { creep.memory.role == 'military' && creep.memory.subRole == 'defender' && creep.memory.flagName == flag.name && creep.memory.dest.x == flag.pos.x && creep.memory.dest.y == flag.pos.y && flag.pos.roomName == creep.memory.dest.roomName});
-            console.log('Defense Flag: Res: '+JSON.stringify(boogies)+ ' Active defenders: '+JSON.stringify(defenders));
+            flag.log('Defense Flag: Res: '+JSON.stringify(boogies)+ ' Active defenders: '+JSON.stringify(defenders));
             /*var defendersI = new Array();
              for(var d in defenders){
 
@@ -596,7 +596,7 @@ var roleFlag = {
             }else{
                 var sp = this.getSpawner(flag);
                 if(1==2){//boogies && boogies.length && boogies[0].getActiveBodyParts(ATTACK)>3){ //TOFIX
-                    console.log('Need a large creep');
+                    flag.log('Need a large creep');
                 }else{
                     var heavybody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,TOUGH,TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,HEAL];
                     var r = sp.createCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,TOUGH,TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,HEAL],undefined,{ role : 'military' , subRole : 'defender', flagName :flag.name, dest : flag.pos });
@@ -604,13 +604,13 @@ var roleFlag = {
                     // var r = sp.createCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,TOUGH,TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK],undefined,{ role : 'military' , subRole : 'defender', flagName :flag.name, dest : flag.pos });
 
                     //var r = sp.createCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,TOUGH,TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,ATTACK],undefined,{ role : 'military' , subRole : 'defender', flagName :flag.name, dest : flag.pos });
-                    console.log('Defense flag: '+flag.name+ ' calling creep:'+r);
+                    flag.log('Defense flag: '+flag.name+ ' calling creep:'+r);
                     if(sp.canCreateCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,TOUGH,TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,ATTACK],undefined,{})){
                         var r = sp.createCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,TOUGH,TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,ATTACK],undefined,{ role : 'military' , subRole : 'defender', flagName :flag.name, dest : flag.pos });
-                        console.log('Defense flag: '+flag.name+ ' calling creep:'+r);
+                        flag.log('Defense flag: '+flag.name+ ' calling creep:'+r);
                     }else if(sp.canCreateCreep([MOVE,MOVE,MOVE,MOVE,TOUGH,TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK],undefined,{})){
                         var r = sp.createCreep([MOVE,MOVE,MOVE,MOVE,TOUGH,TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK],undefined,{ role : 'military' , subRole : 'defender', flagName :flag.name, dest : flag.pos });
-                        console.log('Defense flag: '+flag.name+ ' calling creep:'+r);
+                        flag.log('Defense flag: '+flag.name+ ' calling creep:'+r);
                     }
                 }
             }
@@ -627,7 +627,7 @@ var roleFlag = {
                     for (var def in defenders) {
                         var defender = defenders[def];
                         defender.memory.role = 'recycle';
-                        console.log('Recycling Defender: ' + defender);
+                        flag.log('Recycling Defender: ' + defender);
                     }
                 }
 
@@ -653,16 +653,16 @@ var roleFlag = {
             var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == 'claimer' && creep.memory.flagName == flag.name );
 
             var claimerCount = 0;
-            this.pdeb('Claim room Claimers: '+claimers);
+            flag.log('Claim room Claimers: '+claimers);
             if(claimers && claimers.length<1){
                 
                 
                 var spawner = this.getSpawner(flag);
                 if(!spawner.spawning){
-                    this.pdeb('Attempting to spawn Claimer: '+spawner.createCreep([CLAIM,MOVE],undefined,{ role: 'claimer', task:'claim' , dest: flag.pos, flagName: flag.name}));
+                    flag.log('Attempting to spawn Claimer: '+spawner.createCreep([CLAIM,MOVE],undefined,{ role: 'claimer', task:'claim' , dest: flag.pos, flagName: flag.name}));
                 }
             }else{
-                //this.pdeb('Claimers available');
+                //flag.log('Claimers available');
             }
 
         }catch (e){
@@ -703,17 +703,17 @@ var roleFlag = {
                     spawner =  this.getSpawner(flag);
                 }
                 if(!spawner.spawning){
-                    this.pdeb('Attempting to spawn Claimer: '+spawner.createCreep([CLAIM,CLAIM,MOVE,MOVE],undefined,{ role: 'claimer', task:'reserve' , dest: flag.pos, flagName: flag.name}));
+                    flag.log('Attempting to spawn Claimer: '+spawner.createCreep([CLAIM,CLAIM,MOVE,MOVE],undefined,{ role: 'claimer', task:'reserve' , dest: flag.pos, flagName: flag.name}));
                 }
             }
             
             /*
             if(!isReserved){
                 //Must Reserve
-                //this.pdeb('Will Reserve Controller. About to check if I have creeps on the way');
+                //flag.log('Will Reserve Controller. About to check if I have creeps on the way');
                 needClaimer = true;
             }else{
-                //this.pdeb('Is the controller sufficiently reserved?'+JSON.stringify(isReserved));
+                //flag.log('Is the controller sufficiently reserved?'+JSON.stringify(isReserved));
                 if(isReserved.ticksToEnd <4000){
                     needClaimer = true;
                 }
@@ -836,13 +836,13 @@ var roleFlag = {
             }
             */
         }else if(remotes && rLength>=defaultN){
-            //this.pdeb('Remote builder: have sufficient worker creeps in room'+flag.pos.roomName);
+            //flag.log('Remote builder: have sufficient worker creeps in room'+flag.pos.roomName);
         }else{
-            this.pdeb('Remote builder flag: strange state');
+            flag.log('Remote builder flag: strange state');
         }
-        // this.pdeb('End of remote builder');
+        // flag.log('End of remote builder');
          }catch(err){
-             this.pdeb('Error in RemoteFlag: '+flag.name+' Room'+flag.pos.roomName+' error: '+err);
+             flag.log('Error in RemoteFlag: '+flag.name+' Room'+flag.pos.roomName+' error: '+err);
              Game.notify('Error in RemoteFlag: '+flag.name+' Room'+flag.pos.roomName+' error: '+err);             
          }
     },
@@ -885,11 +885,11 @@ var roleFlag = {
             }
 
         }else if(remotes && rLength>=defaultN){
-            //this.pdeb('Remote builder: have sufficient worker creeps in room'+flag.pos.roomName);
+            //flag.log('Remote builder: have sufficient worker creeps in room'+flag.pos.roomName);
         }else{
-            this.pdeb('Remote builder flag: strange state');
+            flag.log('Remote builder flag: strange state');
         }
-        // this.pdeb('End of remote builder');
+        // flag.log('End of remote builder');
 
     },
     runEnergyFlag:function(flag){
@@ -912,7 +912,7 @@ var roleFlag = {
 
             var sources = flag.pos.findInRange(FIND_SOURCES,1);
             if(sources && sources.length<1){
-                this.pdeb('Miner flag error: '+flag.name+' No source in range 1');
+                flag.log('Miner flag error: '+flag.name+' No source in range 1');
                 Game.notify('Misplaced Miner flag: '+flag.name);
                 return;
             }
@@ -922,7 +922,7 @@ var roleFlag = {
             flag.memory.miners = miners;
             flag.remoteDeadCreepsFromMemoryField("creeps");
             if(miners && miners.length>0){
-                this.pdeb('Flag Miner: '+flag.name+' have: '+ miners.length+' miners');
+               flag.log('Flag Miner: '+flag.name+' have: '+ miners.length+' miners');
             }else{
                 
                 var mSpawn = flag.memory.spawn;
@@ -1079,7 +1079,7 @@ var roleFlag = {
         if(attacker.length<1){
             var sp = this.getSpawner(flag);
             if(sp.spawning){
-                this.pdeb('Attack Flag: Spawner busy');
+                flag.log('Attack Flag: Spawner busy');
             }else{
                 if(sp.canCreateCreep([TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE],undefined,{})){
                     var res = sp.createCreep([TOUGH,TOUGH,TOUGH,ATTACK,ATTACK,ATTACK,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE],undefined,{
@@ -1126,58 +1126,58 @@ var roleFlag = {
         var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.memory.subRole == 'sneaky' && creep.memory.flagName == flag.name );
         var controller = flag.room.controller ? flag.room.controller : null;
         if(controller){
-            //this.pdeb('Sneaky Upgrade controller found'+controller.ticksToDowngrade);
+            //flag.log('Sneaky Upgrade controller found'+controller.ticksToDowngrade);
             if(controller.ticksToDowngrade<2000){
-                this.pdeb('SneakyUpgrade Controller Room: '+flag.pos.roomName+' tick to decay: '+controller.ticksToDowngrade);
+                flag.log('SneakyUpgrade Controller Room: '+flag.pos.roomName+' tick to decay: '+controller.ticksToDowngrade);
                 if(upgraders.length<1){
-                    this.pdeb('Controller Not enough upgraders');
+                    flag.log('Controller Not enough upgraders');
                     var sp = this.getSpawner(flag);
                     if(sp.spawning){
-                        this.pdeb('Upgrader Sneaky have to wait.');
+                        flag.log('Upgrader Sneaky have to wait.');
                     }else{
                         // var r = sp.createCreep([TOUGH,TOUGH,TOUGH,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE],undefined,{ role: 'upgrader', subRole: 'sneaky', flagName: flag.name, dest: flag.pos  });
                         var r = sp.createCreep([WORK,CARRY,MOVE,MOVE],undefined,{ role: 'upgrader', subRole: 'sneaky', flagName: flag.name, dest: flag.pos  });
 
-                        this.pdeb('Sneaky Upgrade: '+r);
+                        flag.log('Sneaky Upgrade: '+r);
                     }
                 }else{
                     //Nothing to do.
-                    this.pdeb('SneakyUpgrade Controller Room: '+flag.pos.roomName+' tick to decay: '+controller.ticksToDowngrade+' upgrader en route');
+                    flag.log('SneakyUpgrade Controller Room: '+flag.pos.roomName+' tick to decay: '+controller.ticksToDowngrade+' upgrader en route');
                 }
             }
 
         }else{
-            this.pdeb('Sneaky Upgrade no controller info');
+            flag.log('Sneaky Upgrade no controller info');
         }
 
     },
 
     runFastidiousAttacker:function(flag){
         var attacker = _.filter(Game.creeps, (creep) => creep.memory.role == 'military' && creep.memory.subRole == 'defender' && creep.memory.flagName == flag.name );
-        this.pdeb('RangedAttacker: ');
+        flag.log('RangedAttacker: ');
         if(attacker.length<1){
-            this.pdeb('RangedAttacker: Spawning attacker: ');
+            flag.log('RangedAttacker: Spawning attacker: ');
             var sp = this.getSpawner(flag);
             var body = [TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,RANGED_ATTACK,RANGED_ATTACK,HEAL];
             var r = sp.createCreep(body,undefined,{ role: 'military', subRole: 'defender', flagName: flag.name, dest: flag.pos  });
-            this.pdeb('RangedAttacker: Spawning attacker res: '+r);
+            flag.log('RangedAttacker: Spawning attacker res: '+r);
         }else{
-            this.pdeb('RangedAttacker: ');
+            flag.log('RangedAttacker: ');
         }
 
     },
 
     runRangedAttacker:function(flag){
         var attacker = _.filter(Game.creeps, (creep) => creep.memory.role == 'military' && creep.memory.subRole == 'defender' && creep.memory.flagName == flag.name );
-        this.pdeb('RangedAttacker: ');
+        flag.log('RangedAttacker: ');
         if(attacker.length<1){
-            this.pdeb('RangedAttacker: Spawning attacker: ');
+            flag.log('RangedAttacker: Spawning attacker: ');
             var sp = this.getSpawner(flag);
 
             var r = sp.createCreep([TOUGH,MOVE,MOVE,MOVE,MOVE,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK],undefined,{ role: 'military', subRole: 'defender', flagName: flag.name, dest: flag.pos  });
-            this.pdeb('RangedAttacker: Spawning attacker res: '+r);
+            flag.log('RangedAttacker: Spawning attacker res: '+r);
         }else{
-            this.pdeb('RangedAttacker: ');
+            flag.log('RangedAttacker: ');
         }
 
 

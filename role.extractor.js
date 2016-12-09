@@ -15,7 +15,7 @@ var roleExtractor = {
             load += creep.carry[r] ? creep.carry[r] : 0;
         }
         var loading = creep.memory.loading;
-        console.log('Extractor: load '+load);//+JSON.stringify(creep.carry) + creep.carry.RESOURCE_UTRIUM);
+        creep.log('Extractor: load '+load);//+JSON.stringify(creep.carry) + creep.carry.RESOURCE_UTRIUM);
         if(load < creep.carryCapacity){
             creep.memory.loading = true;
             loading = true;
@@ -24,7 +24,7 @@ var roleExtractor = {
             creep.memory.loading = false;
             loading = false;
         }
-        //console.log('I am an extractor'+loading + (creep.carry.energy < creep.carryCapacity));
+        //creep.log('I am an extractor'+loading + (creep.carry.energy < creep.carryCapacity));
         
         if(loading){
             this.mineExtractor(creep);    
@@ -38,34 +38,34 @@ var roleExtractor = {
         var extractor = creep.memory.extractor ? Game.getObjectById(creep.memory.extractor) : null;
         var mineralSource = creep.memory.mSource ? Game.getObjectById(creep.memory.mSource) : null;
         try{
-            //console.log("1");
+            //creep.log("1");
         if(!extractor){
-            //console.log("2");
+            //creep.log("2");
             extractor = creep.room.find(FIND_STRUCTURES, {filter: (ext) => { return (ext.structureType == STRUCTURE_EXTRACTOR)}});
             creep.memory.extractor = extractor.id;
-           // console.log('Extractor search: '+extractor);
+           // creep.log('Extractor search: '+extractor);
         }
         if(extractor){
             extractor = extractor[0];
-            //console.log("3"+JSON.stringify(extractor) + 'pos'+extractor.pos);
+            //creep.log("3"+JSON.stringify(extractor) + 'pos'+extractor.pos);
             var mineral = creep.room.lookAt(extractor.pos);
-            //console.log('Mineral: '+mineral);
-            //console.log('Whats here: '+creep.pos.findInRange(FIND_MINERALS,1));
+            //creep.log('Mineral: '+mineral);
+            //creep.log('Whats here: '+creep.pos.findInRange(FIND_MINERALS,1));
             var source = creep.pos.findInRange(FIND_MINERALS,1);
             if(creep.pos.isNearTo(extractor)){
-                //console.log("4");
-                //console.log('4.1'+creep.harvest(source[0]));
+                //creep.log("4");
+                //creep.log('4.1'+creep.harvest(source[0]));
                 if(extractor.cooldown>0){
                     creep.say('StupidCD',true);
                 }
                 creep.harvest(source[0]);
             }else{
-                           // console.log("5");
+                           // creep.log("5");
                 creep.moveTo(extractor, { reusePath: 20});
             }
         }
         }catch(error){
-            console.log('Error in Extractor code: '+error);
+            creep.log('Error in Extractor code: '+error);
             Game.notify('Error in Extractor code: '+error,10);
         }
     },
