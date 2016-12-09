@@ -135,6 +135,7 @@ module.exports = function(){
         return false;
     };
 
+
     Creep.prototype.setInFlagMemory = function(flagName,fieldName){
         try {
             var flag = Game.flags[flagName];
@@ -259,7 +260,21 @@ module.exports = function(){
         this.memory.workingRoom = newRoom;
     };
 
-
+    Creep.prototype.setCreepLogging = function(newVal){
+        this.memory.creepLogging = newVal;
+    };
+    Creep.prototype.creepLogging = function(){
+        var logging = this.memory.creepLogging;
+        if(logging === undefined){
+            this.memory.creepLogging = false;
+        }
+        return logging;
+    };
+    Creep.prototype.log = function(message){
+        if(this.creepLogging()){
+            console.log(message);
+        }
+    };
 
 
 }

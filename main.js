@@ -53,9 +53,11 @@
 		//runTower();
 		//        cpuUsedRep = cpuUsedRep+"\n Used runTower: "+Game.cpu.getUsed();
 		for(var room in Game.rooms){
+			console.log("Running Room:"+room);
 		    try{
 		        var start = Game.cpu.getUsed();
 		      roomMemory.cacheRoomData(Game.rooms[room]);
+
               //  cpuUsedRep = cpuUsedRep+"\n Used RooMCache: "+room+"start:"+start +" end: "+Game.cpu.getUsed();
 		    }catch(err){
 		        console.log('Error in RoomMemory on room'+room+':'+err);
@@ -70,6 +72,8 @@
             
             var start = Game.cpu.getUsed();
 			var creeps=Game.rooms[room].find(FIND_MY_CREEPS);
+			console.log("About to cache CreepsInRoomByRole");
+			//roomMemory.cacheCreepsInRoomByRole(room);
 			//Game.rooms[room].memory.myCreeps = creeps;
 			console.log('Current Room: '+room+ ' Containing '+creeps.length);
 		    var chrono = Game.time;

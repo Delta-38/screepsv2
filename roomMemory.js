@@ -4,6 +4,64 @@ var roomMemory= {
         console.log(text);
     },
 
+    cacheCreepsInRoomByRole:function(room){
+        var room = Game.rooms[room];
+        var creeps = room.find(FIND_MY_CREEPS);
+        console.log("CacheCreepsInRoomByRole");
+        if(!room.memory.creepsByRole){
+            room.memory.creepsByRole = [];
+        }
+        var creepsByRole = room.memory.creepsByRole;
+        console.log("CacheCreepsInRoomByRole: "+creeps.length);
+        for(var creep in creeps){
+            creep = creeps[creep];
+            var role = creep.memory.role;
+            if(role!=null ){
+                if(!creepsByRole[role]){
+                    creepsByRole[role] = [];
+                }
+                var roleCreeps = creepsByRole[role]; //TODO Can it be done by direct access?
+                if(roleCreeps.indexOf(creep.id)==-1){
+                    roleCreeps.push(creep.id);
+                    creepsByRole[role] = roleCreeps;
+                }
+            }else{
+                console.log("Cache in progress: found roleLess Creep"+creep);
+            }
+        }
+        room.memory.creepsByRole = creepsByRole;
+    },
+    /*
+    setCreepInRoomMemoryByRole:function(room, id, role){
+        if(room && id && role){
+            if(!room.memory.creepsByRole){
+                room.memory.creepsByRole = [];
+            }
+            var creepsByRole = room.memory.creepsByRole;
+            if(!creepsByRole[role]){
+                creepsByRole[role] = [];
+            }
+            var roleCreeps = creepsByRole[role];
+            if(roleCreeps.indexOf(id)==-1){
+                roleCreeps.push(id);
+                creepsByRole[role] = roleCreeps;
+                room.memory.creepsByRole = creepsByRole;
+            }
+        }else{
+            console.log("Receiving strange calls:"+romm+id+role);
+        }
+    },
+
+    removeDeadCreepsFromMemoryByRole:function(){
+        var creepsByRole = room.memory.creepsByRole;
+        if(!creepsByRole){
+            return;
+        }
+        var copyByRole = [];
+
+
+    },
+*/
     getConstructionSites: function(room){
         if(!room.memory.constructionSites)   {
             this.setConstructionSites(room);
@@ -264,6 +322,7 @@ var roomMemory= {
         room.memory.hostiles = null;
         room.memory.myStructures = null;
         room.memory.spawns = null;
+        room.memory.creepsByRole = null;
     }
 
 
