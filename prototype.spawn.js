@@ -9,13 +9,13 @@ module.exports = function(){
         body.push(WORK);
         body.push(MOVE);
         body.push(CARRY);
-        var cost = baseCost;
+        var cost = 200;
         var carry = 0;
         var move = 0;
         var work = 0;
         if(roadOnly) {
             while (cost < capacity) {
-                if (carry < 3) {
+                if (carry < 3 && cost+200 <= capacity) {
                     body.push(CARRY);
                     body.push(MOVE);
                     body.push(WORK);
@@ -24,7 +24,7 @@ module.exports = function(){
                     move++;
                     cost += 200;
                 } else {
-                    if (cost + 150 < capacity) {
+                    if (cost + 150 <= capacity) {
                         body.push(MOVE);
                         body.push(WORK);
                         move++;
@@ -75,11 +75,16 @@ module.exports = function(){
 
     };
 
+    Spawn.prototype.spawnBestUpgrader = function(roadOnly){
+        return this.spawnBestUpgrader("{role:'upgrader'}",roadOnly);
+    };
+
     Spawn.prototype.spawnBestUpgrader = function(mem,roadOnly){ //A var for road types ?
-        if(!this.isFull())
+        /*if(!this.isFull()) {
             return ERR_NOT_ENOUGH_ENERGY;
+        }*/
         var body = this.makeUpgraderBody(this.peakCapacity(),roadOnly);
-        return Spawn.createCreep(body,undefined,mem);
+        return this.createCreep(body,undefined,mem);
     };
 
     Spawn.prototype.spawnSmallUpgrader = function(mem,roadOnly){
@@ -118,7 +123,8 @@ module.exports = function(){
     };
 
     Spawn.prototype.peakCapacity = function(){
-        return this.room.energyAvailable == this.room.energyCapacityAvailable;
+        //console.log("R EA:"+this.room.energyAvailable+" ECA:"+this.room.energyCapacityAvailable);
+        return this.room.energyCapacityAvailable;
     };
     Spawn.prototype.currentCapacity = function () {
         return this.room.energyAvailable;

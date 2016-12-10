@@ -408,24 +408,34 @@ var utility = require('utility');
                         creep.moveTo(destination,{reusePath:10 , maxRooms:0});
                     }
                 }else{
-                    var r = Game.flags;
-                    var parkingFlags = new Array();
-                    for(var f in r){
-                        f= r[f];
-                        if(f.color == COLOR_GREEN && f.name.startsWith('Park')){
-                            parkingFlags.push(f.pos);
+                    //Upgrader
+                    if(room.controller){
+                        if(creep.upgradeController(room.controller) == ERR_NOT_IN_RANGE){
+                            creep.log("Upgrading Controller");
+                            creep.say("H-C-UPG");
                         }
+                    }else {
+
+                        var r = Game.flags;
+                        var parkingFlags = new Array();
+                        for (var f in r) {
+                            f = r[f];
+                            if (f.color == COLOR_GREEN && f.name.startsWith('Park')) {
+                                parkingFlags.push(f.pos);
+                            }
+                        }
+                        //creep.log('Parking QUERY RES: '+JSON.stringify(parkingFlags)+'\n\n\n\n\n\n\n');
+                        if (parkingFlags && parkingFlags.length) {
+                            creep.say('parking');
+                            //var a = creep.pos.findClosestByRange(parkingFlags);
+                            //creep.log('Closest Flag: '+a);
+                            creep.log(creep.moveTo(creep.pos.findClosestByRange(parkingFlags)));
+                            //creep.log(creep.moveTo(parkingFlags[0]));
+                        } else {
+                            creep.say('No Task');
+                        }
+                        //creep.moveTo(Game.flags.ParkingLot);
                     }
-                    //creep.log('Parking QUERY RES: '+JSON.stringify(parkingFlags)+'\n\n\n\n\n\n\n');
-                    if(parkingFlags && parkingFlags.length){
-                    creep.say('parking');
-                       //var a = creep.pos.findClosestByRange(parkingFlags);
-                       //creep.log('Closest Flag: '+a);
-                       creep.log(creep.moveTo(parkingFlags[0]));
-                    }else{
-                        creep.say('No Task');
-                    }
-                    //creep.moveTo(Game.flags.ParkingLot);
                 }
             }catch(err){
                 creep.say('RefErr:'+err);

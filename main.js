@@ -119,6 +119,8 @@
 				    roleMilitary.run(creep);
 				}else if(creep.memory.role == 'claimer'){
 				    roleClaimer.run(creep);
+				}else if(creep.memory.role == 'signer'){
+					roleScout.runSigner(creep);
 				}else{
 				    problemCreepsDetail = problemCreepsDetail+" Mem"+creep.memory+" Roleless creep:"+JSON.stringify(creep)+"\n";
 				    Game.notify(problemCreepsDetail);
@@ -649,8 +651,8 @@
 				   structure.structureType != STRUCTURE_WALL 
 				   && (structure.structureType != STRUCTURE_RAMPART || structure.structureType == STRUCTURE_RAMPART && structure.hits<targetRampartStrength) &&
 				   //structure.hits < structure.hitsMax
-			   }});*/
-			   var rampartRepairs = tower.room.find(FIND_STRUCTURES, { filter: (structure) => { return structure.structureType == STRUCTURE_RAMPART && structure.hits<1000}});
+			   }});*/ //TODO Centralise Repair Code and reduce redundant search ops.
+			   var rampartRepairs = tower.room.find(FIND_STRUCTURES, { filter: (structure) => { return structure.structureType == STRUCTURE_RAMPART && structure.hits<10000}});
 			   //console.log('RR:'+JSON.stringify(rampartRepairs));
 			   var wallRepairs = null;//tower.room.find(FIND_STRUCTURES, { filter: (st) => {return st.structureType == STRUCTURE_WALL && st.hits<targetWallStrength}});
 			   //console.log('B: '+JSON.stringify(buildings));

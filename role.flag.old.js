@@ -655,11 +655,12 @@ var roleFlag = {
             var claimerCount = 0;
             flag.log('Claim room Claimers: '+claimers);
             if(claimers && claimers.length<1){
-                
-                
-                var spawner = this.getSpawner(flag);
-                if(!spawner.spawning){
-                    flag.log('Attempting to spawn Claimer: '+spawner.createCreep([CLAIM,MOVE],undefined,{ role: 'claimer', task:'claim' , dest: flag.pos, flagName: flag.name}));
+
+                var spawner = this.getFlagSpawner(flag);//this.getSpawner(flag);
+                if(spawner && !spawner.spawning){
+                    flag.log('Spawner: '+JSON.stringify(spawner));
+                    var res = spawner.createCreep([CLAIM,MOVE],undefined,{ role: 'claimer', task:'claim' , dest: flag.pos, flagName: flag.name});
+                    flag.log('Attempting to spawn Claimer: '+res);
                 }
             }else{
                 //flag.log('Claimers available');
@@ -785,9 +786,14 @@ var roleFlag = {
             var mSpawn = flag.memory.spawn;
             if(mSpawn){
                 getRemote = Game.spawns[mSpawn];
-            }else{
-                getRemote = this.getSpawner(flag);
-                flag.memory.spawn = getRemote.name;
+            }else {
+                if (Game.time % 10 == 0) {
+
+                    Game.notify("Flag: " + flag.name + " in " + flag.pos + " no spawner set");
+                }
+                flag.memory.spawn = null;
+//                getRemote = this.getSpawner(flag);
+         //       flag.memory.spawn = getRemote.name;
             }
 
 
@@ -1010,6 +1016,8 @@ var roleFlag = {
             }else if(flagName.startsWith('Pathing')){
                 this.pathingFlag(flag);
                 
+            }else if(flagName.startsWith('SignController')){
+                this.runSignController(flag);
             }
         }
 
@@ -1182,11 +1190,83 @@ var roleFlag = {
 
 
     },
+
+    runSignController:function(flag){
+        if(!flag.room){
+            flag.log("No Vision over Signing Room");
+            return;
+        }
+        flag.log("SignController Flag Running");
+        var spawner = this.getFlagSpawner(flag);
+        var message = flag.memory.message;
+        if(message === undefined){
+            flag.memory.message = null;
+        }
+        flag.log("SignController Flag Running"+message);
+        flag.remoteDeadCreepsFromMemoryField("signCreeps");
+        var sgCreeps = flag.memory.signCreeps;
+        if(spawner && message){
+            flag.log("SignController Flag Running Have Spawner and message");
+            if(flag.room.controller.sign){
+                if(flag.room.controller.sign.text == message){
+                    //Recycle Creeps
+                    flag.log("SignController Flag Running Message has been set");
+                    for(var creep in sgCreeps){
+                        creep = Game.getObjectById(creep);
+                        if(creep){
+                            flag.log("SignController Flag Running Recycling Creep: "+creep.name);
+                            creep.memory.role = 'recycle';
+                        }
+                    }
+                    flag.memory = null;
+                    flag.remove();
+                    flag.log("My JOB here is done");
+                }else{
+                    if(sgCreeps === undefined || sgCreeps && sgCreeps.length == 0){
+                        flag.log("SignController Flag Running Creating Creep");
+                        var res = spawner.createCreep([MOVE],flag.name+flag.pos,{ role:'signer', flagName: flag.name });
+                        flag.log("SignController Create Result: "+res);
+                    }else{
+                        flag.log("Creep Cap OK");
+                        //Got Creep I'm Fine
+                    }
+                }
+
+            }else{
+                //Wait
+                flag.log("Nothing to do but wait.");
+                if(sgCreeps === undefined || sgCreeps && sgCreeps.length == 0){
+                    flag.log("SignController Flag Running Creating Creep");
+                     var res = spawner.createCreep([MOVE],flag.name+flag.pos,{ role:'signer', flagName: flag.name });
+                     flag.log("SignController Create Result: "+res);
+                }else{
+                    flag.log("Creep Cap OK");
+                    //Got Creep I'm Fine
+                }
+            }
+
+
+        }
+
+
+    },
+
     getMemory:function(flag){
         if(!flag.memory){
             flag.memory = '';
         }
         return flag.memory;
+    },
+
+    getFlagSpawner:function(flag){
+        var spawner = flag.memory.spawn;
+        if(spawner === undefined){
+            flag.memory.spawn = null;
+        }else{
+            spawner = Game.spawns[spawner];
+        }
+        return spawner;
+
     },
     getSpawner:function(flag){
         var spawner;

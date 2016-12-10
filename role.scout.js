@@ -34,6 +34,34 @@ var roleScout = {
         }
         
     },
+
+    runSigner:function(creep){
+        try{
+            var flag = creep.memory.flagName;
+            if(flag){
+                creep.setInFlagMemory(flag,"signCreeps");
+                flag = Game.flags[flag];
+                if(!flag){
+                    creep.memory.role = 'recycle';
+                }
+                var dest =  flag.pos;
+                if(creep.pos.isNearTo(dest)){
+                    var message = flag.memory.message;
+                    if(ERR_NOT_IN_RANGE == creep.signController(creep.room.controller,message)){
+                        creep.moveTo(creep.room.controller);
+                    }
+                }else{
+                    creep.moveTo(dest,{reusePath:10});
+                    creep.say('Signing');
+                }
+            }else{
+                creep.say('No Flag');
+            }
+        }catch (err){
+
+        }
+    },
+
     achieveVision:function(creep,dest){
         var destination = new RoomPosition(dest.x,dest.y,dest.roomName);
         if(creep.room.roomName == destination.roomName){

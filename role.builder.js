@@ -80,7 +80,7 @@ module.exports = {
                     creep.memory.destReached = true;
                 }else{
                     creep.moveTo(flag);
-                    creep.say('Going '+flag);
+                    creep.say('G'+flag.name);
                     return;
                 }
             }

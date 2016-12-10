@@ -16,6 +16,8 @@ var roleMilitary = {
                 this.runDefender(creep);
         }else if(v == 'spam'){
                 this.runSpam(creep);
+        }else{
+            creep.say("What?");
         }
        // var v = creep.memory.subRole;;
        /* switch (v){
@@ -107,7 +109,7 @@ var roleMilitary = {
             creep.memory.path = localPath;
         }
         var res = creep.moveByPath(localPath);
-        this.pdeb('Zergling: MoveByPath: '+res);
+        creep.log('Zergling: MoveByPath: '+res);
         if(res == -5){
             creep.moveTo(flag, {reusePath:20});
             creep.memory.path = null;
@@ -120,21 +122,21 @@ var roleMilitary = {
         dest = new RoomPosition(dest.x, dest.y, dest.roomName);
         var flag = creep.memory.flagName;
         flag = Game.flags[flag];
-        this.pdeb('Def CreepDefender: ' + dest + 'cPos' + creep.pos);
+        creep.log('Def CreepDefender: ' + dest + 'cPos' + creep.pos);
         if (creep.pos.roomName == dest.roomName) {
-            this.pdeb('Moving to target:'+flag);
+            creep.log('Moving to target:'+flag);
             //S&D
             this.moveTo(flag);
             var hostiles = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             var hostileStructures = creep.room.find(FIND_HOSTILE_STRUCTURES);
             var hostileConstructionSites = creep.room.find(FIND_HOSTILE_CONSTRUCTION_SITES);
             if (!hostiles && !hostileStructures && !hostileConstructionSites) {
-                this.pdeb('No more hostiles');
+                creep.log('No more hostiles');
                 creep.moveTo(flag);
 
                 //creep.memory.role = 'recycle';
             } else {
-                this.pdeb('Found Hostiles' + hostiles);
+                creep.log('Found Hostiles' + hostiles);
 
 
                 var target = 0;
@@ -145,22 +147,22 @@ var roleMilitary = {
                 }else if(hostileConstructionSites && hostileConstructionSites.length){
                     target = creep.pos.findClosestByRange(hostileConstructionSites);
                 }
-                this.pdeb('Target: '+target);
+                creep.log('Target: '+target);
                 this.moveTo(target);
                 var range = creep.pos.getRangeTo(target);
                 if(range>1){
                     creep.say('Def CreepGoing to brawl !');
                     var res = creep.moveTo(target);
-                    this.pdeb('Def CreepI am too far: moving closer' + res);
+                    creep.log('Def CreepI am too far: moving closer' + res);
                 }
                 if(this.hasRanged(creep) && range<=3){
                     var att = creep.rangedAttack(target);
-                    this.pdeb('Def CreepAttacking rangeAttack res: ' + att);
+                    creep.log('Def CreepAttacking rangeAttack res: ' + att);
                 }
                 if (range==1) {
                     creep.say('Die Potato! Die!');
                     var att = creep.attack(target);
-                    this.pdeb('Def CreepAttacking att res: ' + att);
+                    creep.log('Def CreepAttacking att res: ' + att);
                 }
                 if(this.hasHeal(creep)){
                     if(creep.hits<creep.hitsMax){
@@ -177,7 +179,7 @@ var roleMilitary = {
         } else {
             var res = creep.moveTo(dest);
             creep.say('OMW');
-            this.pdeb('Def Creep Moving to target: ' + res);
+            creep.log('Def Creep Moving to target: ' + res);
         }
 
     },
@@ -292,9 +294,9 @@ var roleMilitary = {
             creep.memory.peaceCountdown = 0;
             peaceCountdown = 0;
         }
-        this.pdeb('Def CreepDefender: '+dest+'cPos'+creep.pos+ 'peaceCountdown:'+peaceCountdown);
+        creep.log('Def CreepDefender: '+dest+'cPos'+creep.pos+ 'peaceCountdown:'+peaceCountdown);
         if(creep.pos.roomName == dest.roomName){
-            this.pdeb('Moving to target:\n\n\n\n');
+            creep.log('Moving to target:\n\n\n\n');
             //S&D
 
             var hostiles = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
@@ -306,7 +308,7 @@ var roleMilitary = {
                     creep.say('DiddleDoo');
                 }else{
 
-                this.pdeb('No more hostile creeps');
+                creep.log('No more hostile creeps');
                 creep.say('AllGood');
                 if(peaceCountdown<100){
                     creep.memory.peaceCountdown = peaceCountdown+1;
@@ -319,13 +321,13 @@ var roleMilitary = {
             }else{
                 //creep.say('H?');
                 creep.memory.peaceCountdown = 0;
-                this.pdeb('Found Hostiles'+hostiles);
+                creep.log('Found Hostiles'+hostiles);
                 if(creep.pos.isNearTo(hostiles)){
                     creep.say('Def Creep Die Potato! Die!');
                     var att = creep.attack(hostiles);
                     creep.rangedAttack(hostiles);
                     usedAttack = true;
-                    this.pdeb('Def CreepAttacking att res: '+att);
+                    creep.log('Def CreepAttacking att res: '+att);
                 }else{
                     /*
                      if(this.hasRanged(creep) && creep.pos.getRangeTo(hostiles)){
@@ -338,7 +340,7 @@ var roleMilitary = {
                     if(res<0){
                        // creep.say('Merr:'+err);
                     }
-                    this.pdeb('Def CreepI am too far: moving closer'+res);
+                    creep.log('Def CreepI am too far: moving closer'+res);
                     creep.rangedAttack(hostiles);
                     if(!usedAttack && creep.hits<creep.hitsMax){
                         creep.heal(creep);
@@ -349,7 +351,7 @@ var roleMilitary = {
         }else{
             var res = creep.moveTo(dest, {reusePath: 50});
             creep.say('OMW');
-            this.pdeb('Def Creep Moving to target: '+res);
+            creep.log('Def Creep Moving to target: '+res);
             if(res<0){
                 creep.moveTo(dest);
             }
