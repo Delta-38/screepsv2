@@ -417,7 +417,7 @@
         			   
         			}else if(miners.length<2  || agingCreep(miners) && capacity>500){
         				console.log('Trying to spawn miner');
-        				if(capacity >= 600){
+        				if(capacity >= 700){
         				     var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'miner'});
         				}else if(capacity >= 500){
         				     var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'miner'});

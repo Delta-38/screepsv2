@@ -61,6 +61,10 @@ var roleScout = {
 
         }
     },
+    
+    runStargateExplorer:function(creep){
+        
+    },
 
     achieveVision:function(creep,dest){
         var destination = new RoomPosition(dest.x,dest.y,dest.roomName);

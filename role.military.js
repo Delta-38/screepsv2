@@ -286,7 +286,7 @@ var roleMilitary = {
         var usedAttack = false;
         var flag = creep.memory.flagName;
         flag = Game.flags[flag];
-        var dest = flag.pos;//creep.memory.dest;
+        var dest = flag ? flag.pos : creep.pos;//creep.memory.dest;
         dest = new RoomPosition(dest.x,dest.y,dest.roomName);
         
         var peaceCountdown = creep.memory.peaceCountdown;
