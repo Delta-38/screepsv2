@@ -349,7 +349,7 @@ var roleMilitary = {
             }
 
         }else{
-            var res = creep.moveTo(dest, {reusePath: 50});
+            var res = creep.moveTo(dest, {reusePath: 10});
             creep.say('OMW');
             creep.log('Def Creep Moving to target: '+res);
             if(res<0){

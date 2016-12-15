@@ -378,9 +378,11 @@ var roleFlag = {
         flag.memory.targetFerries = targetFerries;
         var remoteBase = flag.memory.remoteBase;
         //console.log('ferries'+ferries);
-        var ferries = _.filter(Game.creeps, (creep) => creep.memory.role == 'ferry' && creep.memory.remotePickup.x == flag.pos.x && creep.memory.remotePickup.y == flag.pos.y && flag.pos.roomName == creep.memory.remotePickup.roomName);
+       // var ferries = _.filter(Game.creeps, (creep) => creep.memory.role == 'ferry' && creep.memory.remotePickup.x == flag.pos.x && creep.memory.remotePickup.y == flag.pos.y && flag.pos.roomName == creep.memory.remotePickup.roomName);
         //console.log('Existing Ferries: '+JSON.stringify(ferries));
-        
+        var mFerries = flag.memory.ferries;
+        var ferries = mFerries;
+        flag.log('Flag '+flag.name+' expected ferries: '+ferries.length+' mFerr '+mFerries.length);
         if(ferries){
             //console.log('Have ferries');
             if(ferries.length<targetFerries){
@@ -924,13 +926,13 @@ var roleFlag = {
             }
             var spawner;
             var sourceToMine = sources[0];
-            var miners = _.filter(Game.creeps, (creep) => creep.memory.role == 'miner' && creep.memory.flagName == flag.name );
-            flag.memory.miners = miners;
             flag.remoteDeadCreepsFromMemoryField("creeps");
-            if(miners && miners.length>0){
-               flag.log('Flag Miner: '+flag.name+' have: '+ miners.length+' miners');
+ //           flag.log('Expected Miners: '+miners.length +' mem '+flag.memory.creeps.length);
+            //if(miners && miners.length>0){
+            if(flag.memory.creeps && flag.memory.creeps.length>0){
+                flag.log('Flag Miner: '+flag.name+' have: '+ flag.memory.creeps.length +' miners');
             }else{
-                
+                flag.log('Flag Miner: '+flag.name+' spawning one more miner');
                 var mSpawn = flag.memory.spawn;
                 if(mSpawn ){
                     
@@ -946,17 +948,18 @@ var roleFlag = {
                 var res = null;
                 var err = null;
                 var cap = flag.room.energyCapacityAvailable;
+                var mem = { role: 'miner', dest: flag.pos ,flagName: flag.name};
                 if( cap>=750){
-                                       res = spawner.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE],undefined,{ role: 'miner', dest: flag.pos ,flagName: flag.name});
+                                       res = spawner.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE],undefined,mem);
  
                 }else if(cap>=650){
-                                        res = spawner.createCreep([WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE],undefined,{ role: 'miner', dest: flag.pos ,flagName: flag.name});
+                                        res = spawner.createCreep([WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE],undefined,mem);
 
                 }else if(cap>=450){
-                                        res = spawner.createCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE],undefined,{ role: 'miner', dest: flag.pos ,flagName: flag.name});
+                                        res = spawner.createCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE],undefined,mem);
 
                 }else if(cap>=300){
-                                        res = spawner.createCreep([WORK,WORK,CARRY,MOVE],undefined,{ role: 'miner', dest: flag.pos ,flagName: flag.name});
+                                        res = spawner.createCreep([WORK,WORK,CARRY,MOVE],undefined,mem);
 
                 }else{
                     err = 'Less than 300 eCap';

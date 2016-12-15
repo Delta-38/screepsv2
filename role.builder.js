@@ -386,6 +386,7 @@ module.exports = {
             var roomStorage = null;
             var dest = null;
             var nearestEnergy = utility.getNearestEnergy(creep);
+            var closestLink;
             creep.memory.loading = true;
               if(creep.room.controller.level>=5){
                 links = roomMemory.getLocalLinks(creep.room);    

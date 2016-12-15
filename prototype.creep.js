@@ -276,5 +276,9 @@ module.exports = function(){
         }
     };
 
+    Creep.prototype.sing = function(text){
+        creep.say(text,true);
+    };
+
 
 }

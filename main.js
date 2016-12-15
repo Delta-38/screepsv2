@@ -17,6 +17,7 @@
 	var roleClaimer = require('role.claimer');
 	global.roomMemory = require('roomMemory');
 	var linkManager = require('linkManager');
+	var roleTerminalManager = require('role.terminalManager');
 	global.observerManager = require('observerManager');
 	require('prototype.creep')();
 	require('prototype.spawn')();
@@ -121,6 +122,8 @@
 				    roleClaimer.run(creep);
 				}else if(creep.memory.role == 'signer'){
 					roleScout.runSigner(creep);
+				}else if(creep.memory.role == 'terminalManager'){
+					roleTerminalManager.run(creep);
 				}else{
 				    problemCreepsDetail = problemCreepsDetail+" Mem"+creep.memory+" Roleless creep:"+JSON.stringify(creep)+"\n";
 				    Game.notify(problemCreepsDetail);
@@ -139,11 +142,13 @@
 				}
                 successfulCreeps++;
 				}catch(err){
-					var errorMsg = 'Error running a role: '+creep.memory.role+' Erro: '+err+ ' on creep: '+name+ 'Room:'+ room +'Stringify:'+JSON.stringify(creep.memory);
+					var errorMsg = 'Error running a role: '+creep.memory.role+' Erro: '+err+ ' on creep: '+name+ 'Room:'+ room +'Stringify:'+JSON.stringify(creep.memory)+' trace'+err.trace;
                     problemCreepsDetail = problemCreepsDetail+errorMsg+"\n";
                     problemCreeps++;
+
 					Game.notify(errorMsg);
 					console.log(errorMsg);
+                    util.longEmail(errorMsg,1);
 				}
         	}
 	        cpuUsedRep = cpuUsedRep+"\nrunCreep:SCS:"+successfulCreeps+"FLR:"+problemCreeps+" "+room+" Used: "+getDuration(chrono)+"T:"+getDuration(start);
@@ -362,7 +367,9 @@
         		var upgraders = _.filter(creeps, (creep) => creep.memory.role == 'upgrader');
         		var builders = _.filter(creeps, (creep) => creep.memory.role == 'builder' && creep.memory.roomName == room);
         		var miners = _.filter(creeps, (creep) => creep.memory.role == 'miner');
-        		//console.log('Detected Harvesters in room:'+room+': '+hv);
+			    var terminalManagers = _.filter(creeps, (creep) => creep.memory.role == 'terminalManager');
+
+			//console.log('Detected Harvesters in room:'+room+': '+hv);
         		//var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
         		//var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
         		//var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
@@ -504,7 +511,18 @@
         				}
         			}else if(weNeedExtractors){
         			    spawn.createCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE],undefined, {role:'extractor'});
-        			}
+        			}else if(roomRef.terminal){
+        				console.log('About to spawn terminalManager');
+						if(terminalManagers.length < 1 || agingCreep(terminalManagers)){
+							console.log('Need to spawn terminalManager\n\n\n\n\n\n');
+							if(spawn.currentCapacity()>=200){
+								var r = spawn.createCreep([CARRY,CARRY,MOVE],undefined,{role: 'terminalManager' , roomName: room });
+								console.log('Spawn result: '+r);
+							}else{
+								console.log('Couldn\'t spawn terminal manager');
+							}
+						}
+					}
         			
     				
     			}else{
@@ -517,7 +535,7 @@
 		  }
 		
 		}catch(err){
-			console.log('Error in population keeper: '+err);
+			console.log('Error in population keeper: '+err+' tr'+err.trace);
 			Game.notify('Error in population keeper: '+err);
 		}
 	}

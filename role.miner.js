@@ -32,6 +32,10 @@ var roleMiner = {
             remoteMining = remoteMining; //Game.getObjectById(remoteMining);
         }
         var dest = creep.memory.dest;
+        var flag = creep.memory.flagName;
+        if(flag){
+            creep.setInFlagMemory(flag,"creeps");
+        }
         var destReached = creep.memory.destReached;
         var source = creep.memory.sourceInUse != null ? Game.getObjectById(creep.memory.sourceInUse) : null;
         var container = creep.memory.container != null ? Game.getObjectById(creep.memory.container) : null;
@@ -39,14 +43,10 @@ var roleMiner = {
             var t = null;
             if (remoteMining) {
                 t = remoteMining;
-                //creep.log('Remining' + JSON.stringify(t) + '\n' + JSON.stringify(creep.pos));
-                // if(t.pos.x == creep.pos.x && t.pos.y == creep.pos.y && creep.pos.roomName == t.pos.roomName){
                 t = creep.pos.findClosestByPath(FIND_SOURCES); //RECHECK THIS LOGIC
-                // }
             }else if(dest){
                 t = new RoomPosition(dest.x,dest.y,dest.roomName);
                 t = t.findClosestByPath(FIND_SOURCES);
-               // creep.log('Going to mining post');
             } else {
                 t = creep.pos.findClosestByPath(FIND_SOURCES);
             }
@@ -106,6 +106,7 @@ var roleMiner = {
                         if(tr<0){
                             //if(tr == ERR_FULL){
                                 creep.drop(RESOURCE_ENERGY);
+                            //TODO Transfer getClosestLink Function to creep prototype.
                             //}
                         }
                         

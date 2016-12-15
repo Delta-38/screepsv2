@@ -151,7 +151,7 @@ var utility = require('utility');
     	        var dest = null;
     	        creep.memory.loading = true;
     	        //creep.log('Containers: '+JSON.stringify(containers));
-                 var miners = _.filter(Game.creeps, (creep) => creep.memory.role == 'miner');
+                 var miners;
                  var closestEnergy = utility.getNearestEnergy(creep);
                 // creep.log('Harvester: '+creep.name+' getnearestenergy'+utility.getNearestEnergy(creep));
                 if(closestEnergy){
@@ -206,7 +206,7 @@ var utility = require('utility');
     	                creep.say('No S');
     	            }
     	            
-    	        }else if(miners.length==0){
+    	        }else if((miners =  _.filter(Game.creeps, (creep) => creep.memory.role == 'miner'))!=null && miners.length==0){
     	            creep.say('going to source');
 //        	        var source = utility.getNearestSource(creep);
         	        var source = creep.room.find(FIND_SOURCES);

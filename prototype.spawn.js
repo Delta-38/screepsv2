@@ -100,8 +100,8 @@ module.exports = function () {
         return body;
     };
 
-    Spawn.prototype.spawnBestUpgrader = function (roadOnly) {
-        return this.spawnBestUpgrader("{role:'upgrader'}", roadOnly);
+    Spawn.prototype.spawnUpgrader = function () {
+        return this.spawnBestUpgrader( {role: 'upgrader'}, true);
     };
     Spawn.prototype.spawnBestBuilder = function (roadOnly) {
         return this.spawnBestUpgrader({role: 'builder'}, roadOnly);
