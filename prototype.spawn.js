@@ -100,11 +100,66 @@ module.exports = function () {
         return body;
     };
 
+    Spawn.prototype.makeBuilderBody = function (capacity,roadOnly) {
+        var body = new Array();
+        body.push(WORK);
+        body.push(MOVE);
+        body.push(CARRY);
+        var cost = 200;
+        var carry = 0;
+        var move = 0;
+        var work = 0;
+        if (roadOnly) {
+            while (cost < capacity) {
+                if (carry < 3 && cost + 200 <= capacity) {
+                    body.push(CARRY);
+                    body.push(MOVE);
+                    body.push(WORK);
+                    work++;
+                    carry++;
+                    move++;
+                    cost += 200;
+                } else {
+                    if (cost + 150 <= capacity) {
+                        body.push(MOVE);
+                        body.push(WORK);
+                        move++;
+                        work++;
+                        cost += 150;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        } else {
+            while (cost < capacity) {
+                if (carry < 3) {
+                    body.push(CARRY);
+                    body.push(MOVE);
+                    body.push(MOVE);
+                    body.push(WORK);
+                    work++;
+                    carry++;
+                    move += 2;
+                    cost += 250;
+                } else {
+                    if (cost + 150 <= capacity) {
+                        body.push(MOVE);
+                        body.push(WORK);
+                        move++;
+                        work++;
+                        cost += 150;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        return body;
+    };
+
     Spawn.prototype.spawnUpgrader = function () {
         return this.spawnBestUpgrader( {role: 'upgrader'}, true);
-    };
-    Spawn.prototype.spawnBestBuilder = function (roadOnly) {
-        return this.spawnBestUpgrader({role: 'builder'}, roadOnly);
     };
 
     Spawn.prototype.spawnBestUpgrader = function (mem, roadOnly) { //A var for road types ?
@@ -123,7 +178,7 @@ module.exports = function () {
     };
 
     Spawn.prototype.spawnBuilder = function (mem) {
-
+        this.makeBuilderBody(capacity);
         //Ratio 1 Work 1Carry 1Move
     };
 

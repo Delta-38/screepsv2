@@ -4,6 +4,10 @@
 
 var terminalManager = {
 
+    roleTerminalManagerMemory:function(room){
+        return {role: 'terminalManager' , roomName: room };
+    },
+
     run:function(creep){
         var gathering = creep.memory.gathering;
         var delivering = creep.memory.delivering;

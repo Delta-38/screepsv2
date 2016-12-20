@@ -2,6 +2,11 @@ var utility = require('utility');
  var _ = require('lodash');
  var roleHarvester = {
 
+     harvesterMemory:function(){
+         return {role:'harvester'};
+     },
+
+
      run2: function(creep){
         if(creep.isFull()){
             creep.memory.loading = true;
@@ -32,7 +37,7 @@ var utility = require('utility');
      },
 
      fillUpWithLink:function(creep){
-        if(creep.room.controller.level<5){
+        if(creep.room.controller && creep.room.controller.level<5){
             return -20;
         }else{
             var validLinks = this.getLinksWithMinimumEnergy(creep.room,creep.carryCapacity);

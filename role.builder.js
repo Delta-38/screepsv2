@@ -9,6 +9,10 @@
 var utility = require('utility');
 module.exports = {
 
+    builderMemory:function(room){
+      return  {role: 'builder', roomName: room };
+    },
+
     builder:function(creep,sites){
         //creep.log('Builder: '+creep.name+ ' sites: '+JSON.stringify(sites));
         var t = creep.pos.findClosestByPath(sites);
@@ -388,7 +392,7 @@ module.exports = {
             var nearestEnergy = utility.getNearestEnergy(creep);
             var closestLink;
             creep.memory.loading = true;
-              if(creep.room.controller.level>=5){
+              if(creep.room.controller && creep.room.controller.level>=5){
                 links = roomMemory.getLocalLinks(creep.room);    
                 closestLink = creep.pos.findClosestByPath(links);
             }

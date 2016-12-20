@@ -3,6 +3,10 @@ var roleUpgrader = {
     findDroppedEnergy: function (creep) {
         return creep.room.find(FIND_DROPPED_ENERGY);
     },
+
+    upgraderMemory:function(){
+        return { role: 'upgrader'};
+    },
     sneakRun: function (creep) {
         var flag = creep.memory.flagName;
         flag = Game.flags[flag];

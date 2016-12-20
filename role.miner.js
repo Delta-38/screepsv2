@@ -12,8 +12,10 @@ var roleMiner = {
     //Harvest
     //Transfer to nearest container
     //Repeat
-
-  updateQuota:function(creep,harvested){
+    minerMemory:function(){
+        return {role: 'miner'};
+    },
+     updateQuota:function(creep,harvested){
         //creep.room.memory.harvestQuota = 5;
         if(harvested<=0){
             return;

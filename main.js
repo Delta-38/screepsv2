@@ -88,59 +88,68 @@
             var successfulCreeps = 0;
                 var problemCreepsDetail = "";
 			chrono = getCpu();
+			var creepsByRole = {};
 
 			for(var name in creeps) {
 				try{
-				var creep = Game.getObjectById(creeps[name].id);
-				var role = creep.memory.role;
-				//console.log('Running Creep:'+creep.name+' role:'+role);
-				if(creep.memory.role == 'harvester') {
-					roleHarvester.run(creep);
-				}else if(creep.memory.role == 'upgrader') {
-					roleUpgrader.run(creep);
-				}else if(creep.memory.role == 'builder'){
-					roleBuilder.run(creep);
-				}else if(creep.memory.role == 'remoteBuilder'){
-					roleBuilder.runRemote(creep);
-				}else if(creep.memory.role == 'miner'){
-					roleMiner.run(creep);
-				}else if(creep.memory.role == 'ferry'){
-					roleFerry.run(creep);
-				}else if(creep.memory.role == 'remoteMiner'){
-					roleRemoteMiner.run(creep);
-				}else if(creep.memory.role == 'scout'){
-				    roleScout.run(creep);
-				}else if(creep.memory.role == 'extractor'){
-				    roleExtractor.run(creep);
-				}else if(creep.memory.role == 'loader'){
-				    roleLoader.run(creep);
-				}else if(creep.memory.role == 'recycle'){
-				    roleRecycle.run(creep);
-				}else if(creep.memory.role == 'military'){
-				    roleMilitary.run(creep);
-				}else if(creep.memory.role == 'claimer'){
-				    roleClaimer.run(creep);
-				}else if(creep.memory.role == 'signer'){
-					roleScout.runSigner(creep);
-				}else if(creep.memory.role == 'terminalManager'){
-					roleTerminalManager.run(creep);
-				}else{
-				    problemCreepsDetail = problemCreepsDetail+" Mem"+creep.memory+" Roleless creep:"+JSON.stringify(creep)+"\n";
-				    Game.notify(problemCreepsDetail);
-				    //creep.memory.role = 'recycle';
-				    console.log('RoleLess Creep found. Recycle requested');
-/*					if(!creep.memory.role){
-						console.log('Role Less creep found: '+creep.name);
-						if(sw==0){
-							creep.memory.role = 'harvester';
-							sw = 1;
-						}else{
-							creep.memory.role = 'upgrader';
-							sw = 0; 
+					var creep = Game.getObjectById(creeps[name].id);
+					var role = creep.memory.role;
+					//console.log('Running Creep:'+creep.name+' role:'+role);
+					if(Game.time%10==0) {
+						var thisRole = creepsByRole[role];
+						if (thisRole) {
+							creepsByRole[role] = thisRole + 1;
+						} else {
+							creepsByRole[role] = 1;
 						}
-*/
-				}
-                successfulCreeps++;
+					}
+					if(creep.memory.role == 'harvester') {
+						roleHarvester.run(creep);
+					}else if(creep.memory.role == 'upgrader') {
+						roleUpgrader.run(creep);
+					}else if(creep.memory.role == 'builder'){
+						roleBuilder.run(creep);
+					}else if(creep.memory.role == 'remoteBuilder'){
+						roleBuilder.runRemote(creep);
+					}else if(creep.memory.role == 'miner'){
+						roleMiner.run(creep);
+					}else if(creep.memory.role == 'ferry'){
+						roleFerry.run(creep);
+					}else if(creep.memory.role == 'remoteMiner'){
+						roleRemoteMiner.run(creep);
+					}else if(creep.memory.role == 'scout'){
+						roleScout.run(creep);
+					}else if(creep.memory.role == 'extractor'){
+						roleExtractor.run(creep);
+					}else if(creep.memory.role == 'loader'){
+						roleLoader.run(creep);
+					}else if(creep.memory.role == 'recycle'){
+						roleRecycle.run(creep);
+					}else if(creep.memory.role == 'military'){
+						roleMilitary.run(creep);
+					}else if(creep.memory.role == 'claimer'){
+						roleClaimer.run(creep);
+					}else if(creep.memory.role == 'signer'){
+						roleScout.runSigner(creep);
+					}else if(creep.memory.role == 'terminalManager'){
+						roleTerminalManager.run(creep);
+					}else{
+						problemCreepsDetail = problemCreepsDetail+" Mem"+creep.memory+" Roleless creep:"+JSON.stringify(creep)+"\n";
+						Game.notify(problemCreepsDetail);
+						//creep.memory.role = 'recycle';
+						console.log('RoleLess Creep found. Recycle requested');
+	/*					if(!creep.memory.role){
+							console.log('Role Less creep found: '+creep.name);
+							if(sw==0){
+								creep.memory.role = 'harvester';
+								sw = 1;
+							}else{
+								creep.memory.role = 'upgrader';
+								sw = 0;
+							}
+	*/
+					}
+					successfulCreeps++;
 				}catch(err){
 					var errorMsg = 'Error running a role: '+creep.memory.role+' Erro: '+err+ ' on creep: '+name+ 'Room:'+ room +'Stringify:'+JSON.stringify(creep.memory)+' trace'+err.trace;
                     problemCreepsDetail = problemCreepsDetail+errorMsg+"\n";
@@ -150,7 +159,12 @@
 					console.log(errorMsg);
                     util.longEmail(errorMsg,1);
 				}
+
         	}
+			if(creepsByRole && Game.time%10==0) {
+				Game.rooms[room].memory.creepsByRole = creepsByRole;
+				console.log('CreepsByRole:'+JSON.stringify(creepsByRole));
+			}
 	        cpuUsedRep = cpuUsedRep+"\nrunCreep:SCS:"+successfulCreeps+"FLR:"+problemCreeps+" "+room+" Used: "+getDuration(chrono)+"T:"+getDuration(start);
 			console.log('Creep Loop on Room:'+room+' finished: Creeps: '+creeps.length + ' ('+successfulCreeps+','+creep.length+') Problem Creeps: '+problemCreeps+'\n'+problemCreepsDetail+'\n\n');
 				//controllerUpgrade(room);
@@ -406,35 +420,35 @@
     				console.log('Can Spawn Stuff!! Harvesters');
         			if(harvesters.length < targetHarvesters || agingCreep(harvesters)) {
     			    	if(spawn.canCreateCreep([CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE],undefined, {})==0){
-        					var newName = spawn.createCreep([CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'harvester'});
+        					var newName = spawn.createCreep([CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined, roleHarvester.harvesterMemory());
         					console.log('Spawning new harvester: ' + newName);
         				}/*else if(spawn.canCreateCreep([CARRY,CARRY,CARRY,MOVE,MOVE,MOVE],undefined, {})==0){
         					var newName = spawn.createCreep([CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'harvester'});
         					console.log('Spawning new harvester: ' + newName);
         				}*/else if(spawn.canCreateCreep([WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE],undefined, {})==0){
-        					var newName = spawn.createCreep([WORK,CARRY,CARRY,CARRY,MOVE,MOVE], undefined, {role: 'harvester'});
+        					var newName = spawn.createCreep([WORK,CARRY,CARRY,CARRY,MOVE,MOVE], undefined, roleHarvester.harvesterMemory());
         					console.log('Spawning new harvester: ' + newName);
         				}else if(spawn.canCreateCreep([WORK,CARRY,CARRY,MOVE,MOVE],undefined, {})==0){
-        					var newName = spawn.createCreep([WORK,CARRY,CARRY,MOVE,MOVE], undefined, {role: 'harvester'});
+        					var newName = spawn.createCreep([WORK,CARRY,CARRY,MOVE,MOVE], undefined, roleHarvester.harvesterMemory());
         					console.log('Spawning new harvester: ' + newName);
         				}else{
-        					var newName = spawn.createCreep([WORK,CARRY,MOVE], undefined, {role: 'harvester'});
+        					var newName = spawn.createCreep([WORK,CARRY,MOVE], undefined, roleHarvester.harvesterMemory());
         					console.log('Spawning new harvester: ' + newName);
         				}
         			   
         			}else if(miners.length<2  || agingCreep(miners) && capacity>500){
         				console.log('Trying to spawn miner');
         				if(capacity >= 700){
-        				     var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'miner'});
+        				     var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE], undefined, roleMiner.minerMemory());
         				}else if(capacity >= 500){
-        				     var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'miner'});
+        				     var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE], undefined, roleMiner.minerMemory());
         				}else if(capacity >= 450){
-        				    var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE], undefined, {role: 'miner'});
+        				    var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE], undefined,roleMiner.minerMemory());
         				}else if(capacity<450){
-    			    	    var newName = spawn.createCreep([WORK,WORK,CARRY,MOVE], undefined, {role: 'miner'});
+    			    	    var newName = spawn.createCreep([WORK,WORK,CARRY,MOVE], undefined,roleMiner.minerMemory());
         				}else{
         				    console.log('Cannot Spawn!!'+newName);
-        				     var newName = spawn.createCreep([WORK,WORK,CARRY,MOVE], undefined, {role: 'miner'});
+        				     var newName = spawn.createCreep([WORK,WORK,CARRY,MOVE], undefined, roleMiner.minerMemory());
         				}
         				
         				
@@ -443,65 +457,65 @@
         			}else  if((upgraders.length < maxUpgraderPopulation) || (agingCreep(upgraders) && (upgraders < maxUpgraderPopulation))) {
         				console.log('MUpgPop:'+maxUpgraderPopulation);
         				if(roomRef.controller.level == 8){
-    				    	if((spawn.canCreateCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'}))==0){
-        						var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
+    				    	if((spawn.canCreateCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory()))==0){
+        						var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
         						console.log('Spawning new upgrader: ' + newName);
-        				    }else if((spawn.canCreateCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'}))==0){
-        						var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
+        				    }else if((spawn.canCreateCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, roleUpgrader.upgraderMemory()))==0){
+        						var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
         						console.log('Spawning new upgrader: ' + newName);
         				    }
         				}else{
         				
-        				if((spawn.canCreateCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'}))==0){
-        						var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
+        				if((spawn.canCreateCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory()))==0){
+        						var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
         						console.log('Spawning new upgrader: ' + newName);
-        				}else if((spawn.canCreateCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'}))==0){
-        						var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
+        				}else if((spawn.canCreateCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory()))==0){
+        						var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
         						console.log('Spawning new upgrader: ' + newName);
-        				}else if((spawn.canCreateCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'}))==0){
-        						var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
+        				}else if((spawn.canCreateCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory()))==0){
+        						var newName = spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
         						console.log('Spawning new upgrader: ' + newName);
-        				}else if((spawn.canCreateCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'}))==0){
-        						var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
+        				}else if((spawn.canCreateCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory()))==0){
+        						var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
         						console.log('Spawning new upgrader: ' + newName);
-        				}else if(roomRef.controller.level<=3 && (spawn.canCreateCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], undefined, {role: 'upgrader'}))==0){
-							var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], undefined, {role: 'upgrader'});
+        				}else if(roomRef.controller.level<=3 && (spawn.canCreateCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory()))==0){
+							var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
 							console.log('Spawning new upgrader: ' + newName);
-						}else if(roomRef.controller.level<2 && (spawn.canCreateCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'upgrader'}))==0){
-        						var newName = spawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'upgrader'});
+						}else if(roomRef.controller.level<2 && (spawn.canCreateCreep([WORK,CARRY,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory()))==0){
+        						var newName = spawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
         						console.log('Spawning new upgrader: ' + newName);
-        				}/*else if((spawn.canCreateCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], undefined, {role: 'upgrader'}))==0){
-        						var newName = spawn.createCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], undefined, {role: 'upgrader'});
+        				}/*else if((spawn.canCreateCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory()))==0){
+        						var newName = spawn.createCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
         						console.log('Spawning new builder: ' + newName);
-        				}*//*else if((spawn.canCreateCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'upgrader'}))==0){
-        						var newName = spawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'upgrader'});
+        				}*//*else if((spawn.canCreateCreep([WORK,CARRY,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory()))==0){
+        						var newName = spawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
         						console.log('Spawning new builder: ' + newName);
         				}else{
-        				    spawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'upgrader'});
+        				    spawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined,roleUpgrader.upgraderMemory());
         				}
         				*/
         				/*var bigUpgraderBody = [WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
         				var smallUpgraderBody = [WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
-        				if(spawn.canCreateCreep(bigUpgraderBody, undefined, undefined, {role: 'upgrader'})){
-        					newName = spawn.createCreep(bigUpgraderBody, undefined, undefined, {role: 'upgrader'});
+        				if(spawn.canCreateCreep(bigUpgraderBody, undefined, undefined,roleUpgrader.upgraderMemory())){
+        					newName = spawn.createCreep(bigUpgraderBody, undefined, undefined,roleUpgrader.upgraderMemory());
         				}else{
-        					newName = spawn.createCreep(smallUpgraderBody, undefined, undefined, {role: 'upgrader'});
+        					newName = spawn.createCreep(smallUpgraderBody, undefined, undefined,roleUpgrader.upgraderMemory());
         				}*/
         				}
         				console.log('Spawning new upgrader: ' + newName );
         			}else if(builders.length < targetBuilders || agingCreep(builders)){
         				if(buildersNeeded){
-        				    // var newName = spawn.createCreep([WORK,CARRY,MOVE], undefined, {role: 'builder'});
+        				    // var newName = spawn.createCreep([WORK,CARRY,MOVE], undefined, roleBuilder.builderMemory());
         					    	console.log('Spawning new builder: ' + newName);
         				    
         					if(spawn.canCreateCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE],undefined, {})==0){
-        						var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'builder', roomName: room });
+        						var newName = spawn.createCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], undefined,roleBuilder.builderMemory(room));
         						console.log('Spawning new builder: ' + newName);
         					}/*else if(spawn.canCreateCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE],undefined, {})==0){
         						var newName = spawn.createCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'builder'});
         						console.log('Spawning new builder: ' + newName);
         					}*/else if(spawn.canCreateCreep([WORK,CARRY,MOVE,MOVE],undefined, {})==0){
-        						var newName = spawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'builder' , roomName: room });
+        						var newName = spawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, roleBuilder.builderMemory(room));
         						console.log('Spawning new builder: ' + newName);
         					}/*
         			        */
@@ -516,7 +530,7 @@
 						if(terminalManagers.length < 1 || agingCreep(terminalManagers)){
 							console.log('Need to spawn terminalManager\n\n\n\n\n\n');
 							if(spawn.currentCapacity()>=200){
-								var r = spawn.createCreep([CARRY,CARRY,MOVE],undefined,{role: 'terminalManager' , roomName: room });
+								var r = spawn.createCreep([CARRY,CARRY,MOVE],undefined, roleTerminalManager.roleTerminalManagerMemory(room));
 								console.log('Spawn result: '+r);
 							}else{
 								console.log('Couldn\'t spawn terminal manager');
