@@ -84,6 +84,37 @@ module.exports = function(){
         }
     };
 
+    Flag.prototype.roomExits = function(){
+        return Game.map.describeExits(this.pos.roomName);
+    };
+
+    Flag.prototype.canBeAttackedByNPC = function(){
+        var canBeAttacked = false;
+        var roomExits =  this.roomExits();
+        //console.log(JSON.stringify(roomExits));
+        for(var ind in roomExits){
+            var roomName = roomExits[ind];
+          //  console.log("Room: "+ind+" "+roomName);
+            if(roomName){
+                var room = Game.rooms[roomName];
+                console.log("Room: "+room);
+                if(room){
+                    var controller = room.controller;
+                    console.log("Room: "+room+" controller"+controller+" "+controller.reservation+" "+controller.owner);
+
+                    if(!controller){
+                        return true;
+                    }
+                    if(controller && ( !controller.reservation && !controller.owner)){
+                        return true;
+                    }
+                }else{
+                    return true;
+                }
+            }
+        }
+        return canBeAttacked;
+    };
 
     //Other functions to implement
 

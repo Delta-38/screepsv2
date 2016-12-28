@@ -8,6 +8,7 @@
  */
 var util = require('utility');
 var _ = require('lodash');
+var songs = require('songs');
 var roleFlag = {
     //TODO Maybe move room complex flag tasks to separate files
     roomDangerCheck:function(flag){
@@ -1017,10 +1018,12 @@ var roleFlag = {
             }else if(flagName.startsWith('ReserveRoom')){
                 this.runReserveRoomFlag(flag);
             }else if(flagName.startsWith('Pathing')){
-                this.pathingFlag(flag);
+                this.pathingFlag(flag); 
                 
             }else if(flagName.startsWith('SignController')){
                 this.runSignController(flag);
+            }else if(flagName.startsWith('Singing')){
+                this.runSingerFlag(flag);
             }
         }
 
@@ -1079,6 +1082,114 @@ var roleFlag = {
 
     },
 
+    runSingerFlag:function(flag){
+        if(!flag.room){
+            return;
+        }
+        //Get 5 singers //Assign parts //Determine coordinates //Lateral -5 +5 +5 +5
+
+        var spawner = flag.spawn();
+        if(!spawner){
+            return;
+        }
+        flag.remoteDeadCreepsFromMemoryField("creeps");
+        var creeps = flag.getCreeps();
+        var actualCreeps = [];
+        for(var creep in creeps){
+            var cr = Game.getObjectById(creeps[creep]);
+            //   flag.log('It\' a creep'+cr+creep +" "+creeps[creep]);
+            if(cr){
+                actualCreeps.push(cr);
+            }
+        }
+
+        if(creeps.length<4){
+            //Find Missing Creep
+            spawner = Game.spawns[spawner];
+            spawner.createCreep([MOVE],undefined,{role:"singer", flagName:flag.name, dest: flag.pos });
+
+            //Get Remaining To Say Missing One
+        }else{
+            flag.log("Got Enough Creeps");
+
+        }
+        var line = flag.memory.line;
+        if(!line){
+            flag.memory.line = 0;
+        }
+        var song = flag.memory.song;
+        if(!song){
+            flag.memory.song = null;
+        }
+        var s = songs.getSong(song);
+       // flag.memory.songText = s;
+        //flag.log("F: Singing"+s);
+        if(song){
+           // flag.log("Song: "+s);
+            var toSing = songs.getLine(song,line);
+            flag.log('Line to Sing:'+toSing);
+            flag.memory.toSing = toSing;
+
+            if(toSing!="Not Found"){
+                flag.memory.toSing = toSing;
+            }
+            if(songs.countSongLines(song)>line+1){
+                flag.memory.line = line+1;
+            }else{
+                flag.memory.line = 0;
+            }
+            this.makeCreepsSing(actualCreeps,toSing);
+        }
+
+
+
+    },
+    makeCreepsSing:function(creeps, text){
+        console.log('Received: '+creeps.length+' text: '+text);
+        var phrases = this.textToSayParts(text);
+        var i = 0;
+
+        for(var i in phrases){
+            var t = phrases[i];
+            if(creeps.length>=phrases.length){
+                creeps[i].say(t,true);
+            }else{
+                creeps[i].say('',true);
+            }
+        }
+
+/*        for(var c in creeps){
+            c = creeps[c];
+            c.say(phrases[i],true);
+            i++;
+        }*/
+    },
+
+    textToSayParts:function(text){
+        var r = [];
+        if(text.length>0){
+            for(i = 0; i<=text.length ; i++){
+                var newI = i+9;
+                r.push(text.substring(i,newI));
+                i = newI-1;
+            }
+        }
+        return r;
+    },
+
+    moveSingersToLocation:function(creeps,pos){
+        console.log('Move Singers: '+JSON.stringify(creeps));
+        for(var creep in creeps){
+            creep = creeps[creep];
+            console.log('Creep MoveSinger: '+creep);
+            if(!creep.pos.isNearTo(pos)){
+                creep.moveTo(pos);
+
+            }
+
+        }
+
+    },
     phaseOne: function (flag) {
 
     },
@@ -1101,6 +1212,9 @@ var roleFlag = {
         }
 
     },
+
+
+
     runMockAttack:function(flag){
         //Required Stages
         var healers = _.filter(Game.creeps, (creep) => creep.memory.role == 'military' && creep.memory.subRole == 'healer' && creep.memory.flagName == flag.name );

@@ -15,6 +15,7 @@
 	var profiler = require('profiler');
 	var roleMilitary = require('role.military');
 	var roleClaimer = require('role.claimer');
+	var roleSinger = require('role.singer');
 	global.roomMemory = require('roomMemory');
 	var linkManager = require('linkManager');
 	var roleTerminalManager = require('role.terminalManager');
@@ -24,7 +25,9 @@
 	require('prototype.flag')();
 	global.util = require('global.util');
 	var _ = require('lodash');
+	var songs = require('songs');
 	profiler.enable();
+
 
 
 
@@ -73,10 +76,10 @@
             
             var start = Game.cpu.getUsed();
 			var creeps=Game.rooms[room].find(FIND_MY_CREEPS);
-			console.log("About to cache CreepsInRoomByRole");
+		//	console.log("About to cache CreepsInRoomByRole");
 			//roomMemory.cacheCreepsInRoomByRole(room);
 			//Game.rooms[room].memory.myCreeps = creeps;
-			console.log('Current Room: '+room+ ' Containing '+creeps.length);
+			//console.log('Current Room: '+room+ ' Containing '+creeps.length);
 		    var chrono = Game.time;
 			try{
 			//console.log('Test:'+room);
@@ -133,6 +136,9 @@
 						roleScout.runSigner(creep);
 					}else if(creep.memory.role == 'terminalManager'){
 						roleTerminalManager.run(creep);
+					}else if(creep.memory.role == 'singer'){
+					//	creep.suicide();
+						roleSinger.run(creep);
 					}else{
 						problemCreepsDetail = problemCreepsDetail+" Mem"+creep.memory+" Roleless creep:"+JSON.stringify(creep)+"\n";
 						Game.notify(problemCreepsDetail);
@@ -211,6 +217,8 @@
 		    //Game.notify(cpuUsedRep,30);
 		    splitReport(cpuUsedRep,1);
 		}
+		//songs.saveSongToMemory("WhenSorrowSang","So let me out of it-Out of the cold-To bring back the light and hope for all-And so if I could get you in-Just for a little while-Into the songs of sorrow-You might understand-Where am I now-Beyond the dawn-(Where) Hope’s turned to dust-At all-Immortal love’s-Fooled by the hands of doom-That love means death-I realized too soon-Caught in the afterlife-I’ve gone too far-When sorrow sang softly and sweet-The air was filled with tears-Full of sadness and grief-When sorrow sang softly and sweet-I feel like screaming-But I can’t breath in-Shall I wane right now-I will not leave this-World of living-Till she has said-Goodbye-Out in the cold-I still wait for her call-And her last kiss-It shall be release-I can’t forget her-Her face will not leave-From the depths of my soul-I long for her-Caught in the afterlife-I’ve gone to far-When sorrow sang softly and sweet-The air was filled with tears-Full of sadness and grief-When sorrow sang softly and sweet-So I heard all about it-Her voice’s so clear-She’s woven both themes in there-Moved me to tears-The world shall hear this sad song-Song of sorrow song of grief-Can’t change the way of his kind-Can’t change the way of her kind-Caught in the afterlife-I’ve gone to far-When sorrow sang softly and sweet-The air was filled with tears-Full of sadness and grief-When sorrow sang softly and sweet");
+		//console.log(songs.getSong("WhenSorrowSang"));
 	}
 	
 	function splitReport(report,interval){
@@ -309,9 +317,19 @@
 	function getSpawnTimer(){
 		return Memory.spawnCheckTimer != null ? Memory.spawnCheckTimer : defaultSpawnTimer;
 	}
-	
+
+	function useExtractor(room){
+		var use = Game.rooms[room].memory.useExtractor;
+		if(use === undefined){
+            Game.rooms[room].memory.useExtractor = true;
+        }
+        return use;
+	}
 	function extractionManager(room){
 	    var control = Game.rooms[room].controller;
+	    if(!useExtractor(room)){
+	    	return;
+		}
 	    if(control && control.my && control.level>=6){
 	        //console.log('Room has sufficient control level');
 	        var extractor = Game.rooms[room].find(FIND_STRUCTURES, {filter: (ext) => { return (ext.structureType == STRUCTURE_EXTRACTOR)}});
@@ -333,6 +351,9 @@
 	}
 	function needExtractors(room){
 	    //console.log('Room '+room+'Needs Extractors? ');
+		if(!useExtractor(room)){
+			return false;
+		}
 	    if(!Game.rooms[room].memory.mineralDeposit){
 	        return false;
 	    }
@@ -373,7 +394,7 @@
 	    var roomSpawners = roomRef.find(FIND_MY_SPAWNS); //CAN BE OPTIMIZED
 		var capacity = roomRef.energyCapacityAvailable;
 
-		console.log('Room: '+' N:'+room+' spawners' +roomSpawners+'cap '+capacity);
+		//console.log('Room: '+' N:'+room+' spawners' +roomSpawners+'cap '+capacity);
 	
 		if(roomSpawners!=null && roomSpawners.length>0){
         		
@@ -524,7 +545,7 @@
         					console.log('No builders needed currently');
         				}
         			}else if(weNeedExtractors){
-        			    spawn.createCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE],undefined, {role:'extractor'});
+        			    spawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE],undefined, {role:'extractor'});
         			}else if(roomRef.terminal){
         				console.log('About to spawn terminalManager');
 						if(terminalManagers.length < 1 || agingCreep(terminalManagers)){
@@ -544,7 +565,7 @@
     			}
 		   
 		  }else{
-			  console.log('No Spawners in room: '+room);
+			  //console.log('No Spawners in room: '+room);
 			 //Game.notify('No Spawners in room: '+room);
 		  }
 		

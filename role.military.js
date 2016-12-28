@@ -305,17 +305,17 @@ var roleMilitary = {
                 creep.say('Clear!');
                 creep.moveTo(dest);
                 if(creep.room.owner!= creep.owner){
-                    creep.say('DiddleDoo');
+                    creep.say('DiddleDoo.');
                 }else{
 
-                creep.log('No more hostile creeps');
-                creep.say('AllGood');
-                if(peaceCountdown<100){
-                    creep.memory.peaceCountdown = peaceCountdown+1;
-                }else{
-                    //creep.memory.role = 'recycle';
+                    creep.log('No more hostile creeps');
+                    creep.say('AllGood');
+                    if(peaceCountdown<100){
+                        creep.memory.peaceCountdown = peaceCountdown+1;
+                    }else{
+                        //creep.memory.role = 'recycle';
 
-                }
+                    }
                 }
                
             }else{

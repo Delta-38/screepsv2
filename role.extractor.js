@@ -8,7 +8,7 @@
  */
 
 var roleExtractor = {
-    
+
     run:function(creep){
         var load = 0;
         for(var r in creep.carry){
@@ -48,19 +48,22 @@ var roleExtractor = {
         if(extractor){
             extractor = extractor[0];
             //creep.log("3"+JSON.stringify(extractor) + 'pos'+extractor.pos);
-            var mineral = creep.room.lookAt(extractor.pos);
-            //creep.log('Mineral: '+mineral);
-            //creep.log('Whats here: '+creep.pos.findInRange(FIND_MINERALS,1));
-            var source = creep.pos.findInRange(FIND_MINERALS,1);
             if(creep.pos.isNearTo(extractor)){
-                //creep.log("4");
-                //creep.log('4.1'+creep.harvest(source[0]));
-                if(extractor.cooldown>0){
+                 if(extractor.cooldown>0){
                     creep.say('StupidCD',true);
-                }
-                creep.harvest(source[0]);
+                 }
+                 var mineral = creep.memory.mineral ? Game.getObjectById(creep.memory.mineral) : null;
+                 if(!mineral){
+                    mineral = creep.pos.findInRange(FIND_MINERALS,1);
+                    if(mineral && mineral.length){
+                        mineral = mineral[0];
+                        creep.memory.mineral = mineral.id;
+                    }
+                 }
+                 if(mineral){
+                     creep.harvest(mineral);
+                 }
             }else{
-                           // creep.log("5");
                 creep.moveTo(extractor, { reusePath: 20});
             }
         }

@@ -1127,6 +1127,13 @@ var roleFlag = {
 
 
     },
+
+    runSingingFlag:function(flag){
+        if(!flag.room){
+            return;
+        }
+        //Check if All Creeps are alive
+    },
     getMemory:function(flag){
         if(!flag.memory){
             flag.memory = '';

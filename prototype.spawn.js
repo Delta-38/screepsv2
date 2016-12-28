@@ -61,6 +61,30 @@ module.exports = function () {
         }
         return body;
     };
+    
+    Spawn.prototype.makeHealerBody = function(capacity){
+        var body = new Array();
+        body.push(MOVE);
+        body.push(HEAL);
+        var cost = 300;
+        var move = 0;
+        var heal = 0;
+
+        while (cost < capacity) {
+            if (cost + 300 <= capacity) {
+                    body.push(MOVE);
+                    body.push(HEAL);
+                    heal++;
+                    cost += 300;
+                } else {
+                    break;
+                }
+            }
+
+
+        return body;
+        
+    };
 
     Spawn.prototype.makeMinerBody = function (capacity, emergency) {
         var body = new Array();
