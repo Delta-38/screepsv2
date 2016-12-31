@@ -184,6 +184,14 @@ var roleMilitary = {
 
     },
 
+    attackClosestEnemyStructure:function(creep){
+        var structures = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
+        creep.log('Structures: '+JSON.stringify(structures));
+        if(structures){
+            creep.moveTo(structures);
+            creep.log(creep.dismantle(structures));
+        }
+    },
     runDismantler:function(creep){
         var dest = creep.memory.dest;
         if(!dest){
@@ -204,20 +212,20 @@ var roleMilitary = {
                     creep.log(creep.dismantle(targets[0]));
                     creep.say('16Tons',true);
                 } else {
-                    var structures = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
-                    if (structures && structures.length) {
-                        creep.log(creep.dismantle(structures[0]));
-                    }
+                   this.attackClosestEnemyStructure(creep);
+                    creep.say('16Tons',true);
+
                 }
             }
         }else{
             if(creep.room.controller && !creep.room.controller.my){
-                var r = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
-                creep.moveTo(r);
-                creep.dismantle(r);
+                this.attackClosestEnemyStructure(creep);
                 creep.say('16Tons',true);
             }else{
+                this.attackClosestEnemyStructure(creep);
+
                 creep.say('No Work');
+
             }
 
         }

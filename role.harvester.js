@@ -197,7 +197,17 @@ var utility = require('utility');
     	            }else{
     	                creep.say('No C');
     	            }
-    	        }else if((roomStorage = utility.getNonEmptyStorage(creep))&& roomStorage && roomStorage.length){
+    	        }else if(creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 0){
+                    dest = creep.room.storage;
+                    creep.stdMove(dest);
+                    var err = creep.withdraw(dest,RESOURCE_ENERGY);
+                    creep.memory.destination = dest.id;
+                }else if(creep.room.terminal &&( creep.room.terminal.store[RESOURCE_ENERGY] > 160000 || creep.room.terminal.store[RESOURCE_ENERGY] > creep.room.storage.store[RESOURCE_ENERGY])){
+    	            dest = creep.room.terminal;
+                    creep.stdMove(dest);
+                    var err = creep.withdraw(dest,RESOURCE_ENERGY);
+                    creep.memory.destination = dest.id;
+                }/*else if((roomStorage = utility.getNonEmptyStorage(creep))&& roomStorage && roomStorage.length){ //TOCHANGE ABSOLUTELY ADD TERMINAL
     	            dest = roomStorage[0];//creep.pos.findClosestByPath(containers);
     	            if(dest!=null){
     	                //creep.log('COnt: '+dest+ ' en: '+dest.energy);
@@ -211,7 +221,7 @@ var utility = require('utility');
     	                creep.say('No S');
     	            }
     	            
-    	        }else if((miners =  _.filter(Game.creeps, (creep) => creep.memory.role == 'miner'))!=null && miners.length==0){
+    	        }*/else if((miners =  _.filter(Game.creeps, (creep) => creep.memory.role == 'miner'))!=null && miners.length==0){
     	            creep.say('going to source');
 //        	        var source = utility.getNearestSource(creep);
         	        var source = creep.room.find(FIND_SOURCES);

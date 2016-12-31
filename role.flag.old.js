@@ -1024,6 +1024,8 @@ var roleFlag = {
                 this.runSignController(flag);
             }else if(flagName.startsWith('Singing')){
                 this.runSingerFlag(flag);
+            }else if(flagName.startsWith('Extensions')){
+                this.buildExtensionsFlag(flag);
             }
         }
 
@@ -1148,7 +1150,7 @@ var roleFlag = {
         console.log('Received: '+creeps.length+' text: '+text);
         var phrases = this.textToSayParts(text);
         var i = 0;
-
+        var move = 1;
         for(var i in phrases){
             var t = phrases[i];
             if(creeps.length>=phrases.length){
@@ -1156,6 +1158,9 @@ var roleFlag = {
             }else{
                 creeps[i].say('',true);
             }
+            creeps[i].move(move);
+            move +=2;
+
         }
 
 /*        for(var c in creeps){
@@ -1368,6 +1373,58 @@ var roleFlag = {
 
     },
 
+    buildExtensionsFlag:function(flag){
+        if(flag.room) {
+            var doneWithExtensions = flag.memory.extensionsDone;
+            if (!doneWithExtensions) {
+                if (this.buildExtensionGroup(flag.room, flag.pos)) {
+                    flag.memory.extensionsDone = true;
+
+
+                    delete flag.memory;
+                    flag.remove();
+
+                }
+            }else{
+
+            }
+        }
+
+
+    },
+
+    buildExtensionGroup:function (room, position) {
+        if(room && position){
+            this.pdeb('Building Extension Group:');
+            var center = position;
+            var positionsForExtensions = [];
+            var extensions = [];
+            var success = true;
+            for(i=position.x - 1; i<=position.x+1;i++){
+                var p = new RoomPosition(i,position.y,position.roomName);
+                positionsForExtensions.push(p);
+            }
+            for(i = position.y -1; i<= position.y+1;i++){
+                var p = new RoomPosition(position.x,i,position.roomName);
+                positionsForExtensions.push(p);
+            }
+
+            for(loc in positionsForExtensions){
+                this.pdeb('Should Build Extension in '+positionsForExtensions[loc]);
+                var r = room.createConstructionSite(positionsForExtensions[loc],STRUCTURE_EXTENSION);
+                if(r != 0){
+                    success = false;
+                }
+            }
+            return success;
+        }
+    },
+
+    buildRoadsAroundPoints:function(room,points){
+
+
+
+    },
     getMemory:function(flag){
         if(!flag.memory){
             flag.memory = '';

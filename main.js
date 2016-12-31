@@ -5,7 +5,6 @@
 	var roleRemoteMiner = require('role.remoteMiner');
 	var utility = require('utility');
 	var towers = require('role.towerControl');
-	var roleDefense = require('role.defense');
 	var roleFerry = require('role.ferry');
 	var roleFlag = require('role.flag.old');
 	var roleScout = require('role.scout');

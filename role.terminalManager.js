@@ -58,7 +58,8 @@ var terminalManager = {
                 creep.log("Storage Resource: "+resourceKey);
                 var termRes = creep.room.terminal.store[resourceKey];
                 creep.say('a'+termRes);
-                if(!termRes || (termRes && termRes < 80000 && termRes < creep.room.storage.store[resourceKey])){
+                var amount = RESOURCE_ENERGY == resourceKey ? 160000 : 80000;
+                if(!termRes || (termRes && termRes < amount && termRes < creep.room.storage.store[resourceKey])){
                     creep.memory.fetching = resourceKey;
                     return resourceKey;
                 }
